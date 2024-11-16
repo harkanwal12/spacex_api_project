@@ -9,6 +9,7 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "env": {
+                "URL_PREFIX": "/api",
                 "FLASK_APP": "api\\app.py",
                 "FLASK_ENV": "Development",
                 "FLASK_DEBUG": "1"
@@ -19,6 +20,18 @@
                 "--port", "5555"
             ],
             "jinja": true
-        }
+        },
+        {
+            "name": "CLIENT: Development",
+            "type": "chrome",
+            "request": "launch",            
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}/client/src",
+            "sourceMapPathOverrides": {
+                "webpack:///./src/*": "${webRoot}/*"
+            },
+            "preLaunchTask": "start-dev-server",
+            "postDebugTask": "stop-server"
+        },
     ]   
 }

@@ -20,9 +20,10 @@ def get_all_launches():
         raise e
 
     launches_df = pd.DataFrame(launches)
-    launches_df = launches_df[["id", "name", "date_utc", "success", "details"]]
+    launches_df = launches_df[["id", "name", "date_utc", "success"]]
     launches_df["date_utc"] = pd.to_datetime(launches_df["date_utc"], utc=True)
     launches_df["year"] = launches_df["date_utc"].dt.year
+    launches_df["success"] = launches_df["success"].fillna(value="Unknown")
 
     return (jsonify(launches_df.to_dict("records")), 200)
 
@@ -48,7 +49,7 @@ def get_all_launchpads_with_launches():
     launchpads_df = pd.DataFrame(launchpads)
 
     launches_df = launches_df[
-        ["id", "name", "date_utc", "success", "details", "launchpad"]
+        ["id", "name", "date_utc", "success", "launchpad"]
     ]
     launchpads_df = launchpads_df[
         [
@@ -57,7 +58,6 @@ def get_all_launchpads_with_launches():
             "full_name",
             "locality",
             "status",
-            "details",
             "launches",
         ]
     ]
@@ -80,7 +80,6 @@ def get_all_launchpads_with_launches():
                 "full_name",
                 "locality",
                 "status",
-                "details_launchpad",
             ]
         )
         .apply(
@@ -90,7 +89,6 @@ def get_all_launchpads_with_launches():
                     "name_launch",
                     "date_utc",
                     "success",
-                    "details_launch",
                 ]
             ].to_dict(orient="records")
         )
