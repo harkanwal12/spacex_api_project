@@ -1,4 +1,7 @@
+from logging.config import dictConfig
+
 from flask import Flask
+
 from api.config import config
 
 
@@ -12,8 +15,29 @@ def create_app(config_type: str = None) -> Flask:
         config_type = "Default"
     app.config.from_object(config[config_type])
 
-    from . import launches
+    from api.index import index
+    from api.launches import launches
 
     app.register_blueprint(launches.launches_bp)
+    app.register_blueprint(index.index_bp)
+
+    dictConfig(
+        {
+            "version": 1,
+            "formatters": {
+                "default": {
+                    "format": "[%(asctime)s] %(levelname)s in %(module)s: %(message)s",
+                }
+            },
+            "handlers": {
+                "wsgi": {
+                    "class": "logging.StreamHandler",
+                    "stream": "ext://flask.logging.wsgi_errors_stream",
+                    "formatter": "default",
+                }
+            },
+            "root": {"level": "INFO", "handlers": ["wsgi"]},
+        }
+    )
 
     return app
