@@ -25,7 +25,7 @@ def get_all_launches():
     launches_df["year"] = launches_df["date_utc"].dt.year
     launches_df["success"] = launches_df["success"].fillna(value="Unknown")
 
-    return (jsonify(launches_df.to_dict("records")), 200)
+    return jsonify(launches_df.to_dict("records")), 200
 
 
 @launches_bp.route("/get_all_launchpads_with_launches", methods=["GET"])
@@ -59,8 +59,17 @@ def get_all_launchpads_with_launches():
             "locality",
             "status",
             "launches",
+            "images",
+            "details",
+            "launch_attempts",
         ]
     ]
+
+    launchpads_df["images"] = launchpads_df["images"].apply(
+        lambda x: x["large"][0]
+    )
+
+    launches_df["date_utc"] = pd.to_datetime(launches_df["date_utc"], utc=True)
 
     launchpads_df = launchpads_df.explode("launches")
 
@@ -80,6 +89,9 @@ def get_all_launchpads_with_launches():
                 "full_name",
                 "locality",
                 "status",
+                "images",
+                "details",
+                "launch_attempts",
             ]
         )
         .apply(
@@ -90,9 +102,11 @@ def get_all_launchpads_with_launches():
                     "date_utc",
                     "success",
                 ]
-            ].to_dict(orient="records")
+            ]
+            .dropna(how="all")
+            .to_dict(orient="records")
         )
         .reset_index(name="launches")
     )
 
-    return (jsonify(grouped_df.to_dict("records")), 200)
+    return jsonify(grouped_df.to_dict("records")), 200

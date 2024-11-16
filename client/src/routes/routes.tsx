@@ -4,13 +4,13 @@ import Layout from "@/pages/Layout";
 import Home from "@/pages/Home"
 
 import Launches, {loader as launchesLoader} from "@/pages/Launches/Launches";
-import LaunchSites from "@/pages/LaunchSites";
+import LaunchSites, {loader as launchsiteLoader} from "@/pages/Launchsites/LaunchSites";
 
 const routes = createRoutesFromElements(
   <Route path='/' element={<Layout/>}>
     <Route index element={<Home/>}/>
     <Route path='launches' element={<Launches/>} loader={launchesLoader}/>
-    <Route path='launchsites' element={<LaunchSites/>}/>
+    <Route path='launchsites' element={<LaunchSites/>} loader={launchsiteLoader}/>
   </Route>
 )
 
