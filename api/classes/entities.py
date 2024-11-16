@@ -5,7 +5,7 @@ the SpaceX-API into Pythonic dataclass entities.
 """
 
 from dataclasses import dataclass
-from typing import Optional, List, Any
+from typing import Optional
 from datetime import datetime
 
 
@@ -34,13 +34,13 @@ class Fairings:
     reused: Optional[bool] = None
     recovery_attempt: Optional[bool] = None
     recovered: Optional[bool] = None
-    ships: Optional[List[str]] = None
+    ships: Optional[list[str]] = None
 
 
 @dataclass
 class Flickr:
-    small: Optional[List[str]] = None
-    original: Optional[List[str]] = None
+    small: Optional[list[str]] = None
+    original: Optional[list[str]] = None
 
 
 @dataclass
@@ -71,10 +71,10 @@ class Links:
 
 @dataclass
 class Launch:
-    id: Optional[str]
-    name: Optional[str]
-    date_utc: Optional[datetime]
-    launchpad: Optional[str]
+    id: str
+    name: str
+    date_utc: datetime
+    launchpad: str
     fairings: Optional[Fairings] = None
     links: Optional[Links] = None
     static_fire_date_utc: Optional[datetime] = None
@@ -83,18 +83,18 @@ class Launch:
     window: Optional[int] = None
     rocket: Optional[str] = None
     success: Optional[bool] = None
-    failures: Optional[List[Failure]] = None
+    failures: Optional[list[Failure]] = None
     details: Optional[str] = None
-    crew: Optional[List[Any]] = None
-    ships: Optional[List[Any]] = None
-    capsules: Optional[List[Any]] = None
-    payloads: Optional[List[str]] = None
+    crew: Optional[list[str]] = None
+    ships: Optional[list[str]] = None
+    capsules: Optional[list[str]] = None
+    payloads: Optional[list[str]] = None
     flight_number: Optional[int] = None
     date_unix: Optional[int] = None
     date_local: Optional[datetime] = None
     date_precision: Optional[str] = None
     upcoming: Optional[bool] = None
-    cores: Optional[List[Core]] = None
+    cores: Optional[list[Core]] = None
     auto_update: Optional[bool] = None
     tbd: Optional[bool] = None
     launch_library_id: Optional[str] = None
@@ -102,23 +102,23 @@ class Launch:
 
 @dataclass
 class Images:
-    large: Optional[List[str]] = None
+    large: Optional[list[str]] = None
 
 
 @dataclass
 class Launchpad:
-    id: Optional[str]
+    id: str
     name: Optional[str]
-    full_name: Optional[str]
-    locality: Optional[str]
-    region: Optional[str]
-    launches: Optional[List[str]]
-    status: Optional[str]
-    images: Optional[Images] = None
+    full_name: str
+    locality: str
+    launches: list[str]
+    status: str
+    images: list[Images]
+    details: Optional[str]
+    region: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     launch_attempts: Optional[int] = None
     launch_successes: Optional[int] = None
-    rockets: Optional[List[str]] = None
+    rockets: Optional[list[str]] = None
     timezone: Optional[str] = None
-    details: Optional[str] = None
