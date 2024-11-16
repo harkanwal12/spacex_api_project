@@ -1,5 +1,4 @@
-from flask import Blueprint, jsonify, json
-from api.classes.connection import SpacexConnection
+from flask import Blueprint, jsonify
 from werkzeug.exceptions import HTTPException
 
 index_bp = Blueprint("index", __name__)
@@ -9,19 +8,6 @@ index_bp = Blueprint("index", __name__)
 def index():
     return jsonify(
         {"message": "Welcome to the SpaceX Python Wrapper API"}, 200
-    )
-
-
-@index_bp.route("/get_company_info", methods=["GET"])
-def get_company_info():
-    conn = SpacexConnection()
-    # add exception handling for return
-
-    company_info = conn.get_company_info()
-
-    return (
-        jsonify(company_info.to_dict()),
-        200,
     )
 
 

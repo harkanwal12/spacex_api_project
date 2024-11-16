@@ -35,12 +35,6 @@ class SpacexConnection:
 
         return response
 
-    def get_company_info(self) -> CompanyInfo:
-        url = "/v4/company"
-        company_data = self.fetch_data(url)
-
-        return CompanyInfo(**{k: company_data[k] for k in {"name", "founded"}})
-
     def get_all_launches(self) -> pd.DataFrame:
         url = "/v4/launches"
         fields = ["name", "date_utc", "launchpad", "success", "id", "details"]
