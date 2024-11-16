@@ -1,6 +1,5 @@
 from flask import current_app as app, abort
 import requests
-from api.classes.entities import CompanyInfo, LaunchSite, Launch
 import pandas as pd
 
 
