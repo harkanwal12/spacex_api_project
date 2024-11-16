@@ -6,9 +6,7 @@ index_bp = Blueprint("index", __name__)
 
 @index_bp.route("/")
 def index():
-    return jsonify(
-        {"message": "Welcome to the SpaceX Python Wrapper API"}, 200
-    )
+    return jsonify("Welcome to the SpaceX Python Wrapper API"), 200
 
 
 @index_bp.errorhandler(404)
