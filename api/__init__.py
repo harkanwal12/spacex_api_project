@@ -2,6 +2,7 @@ from logging.config import dictConfig
 
 from flask import Flask
 
+from api.classes.spacex import SpaceX
 from api.config import config
 
 
@@ -38,6 +39,10 @@ def create_app(config_type: str = None) -> Flask:
             },
             "root": {"level": "INFO", "handlers": ["wsgi"]},
         }
+    )
+
+    app.spacex_api = SpaceX(
+        base_url=app.config["BASE_URL"], ssl_verify=False, logger=app.logger
     )
 
     return app
