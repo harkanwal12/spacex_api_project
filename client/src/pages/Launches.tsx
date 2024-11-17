@@ -38,6 +38,28 @@ const Launches = () => {
 
     const columns = useMemo(() => [
         {
+            accessorKey: "patch",
+            header: () => <div className="text-center">Patch</div>,
+            cell: ({ cell }:any) => {
+                let patchUrl = cell.getValue()
+                return (
+                    <div className="flex justify-center">
+                        {patchUrl ?
+                        <img 
+                        src={cell.getValue()} 
+                        alt="Item" 
+                        style={{ width: '100px', height: '100px' }} />
+                        : 
+                        <div className="w-24 h-24 flex items-center justify-center border">
+                            No patch available
+                        </div>
+                        }
+                    </div>
+                    
+                )
+            },
+        },
+        {
             accessorKey: "name",
             header: () => <div className="text-center">Name</div>,
         },

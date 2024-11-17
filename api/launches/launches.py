@@ -50,13 +50,6 @@ def get_all_launches_in_year(year):
         "query": {"date_utc": {"$gte": str(year), "$lt": str(next_year)}},
         "options": {
             "pagination": False,
-            "select": {
-                "id": 1,
-                "success": 1,
-                "details": 1,
-                "name": 1,
-                "date_utc": 1,
-            },
         },
     }
 
@@ -68,9 +61,15 @@ def get_all_launches_in_year(year):
         raise e
 
     launches_df = pd.DataFrame(launches)
-    launches_df = launches_df[["id", "success", "details", "name", "date_utc"]]
     launches_df["date_utc"] = pd.to_datetime(launches_df["date_utc"], utc=True)
     launches_df["success"] = launches_df["success"].fillna(value="Unknown")
+    launches_df["patch"] = launches_df["links"].apply(
+        lambda x: x["patch"]["small"]
+    )
+    launches_df = launches_df[
+        ["id", "success", "details", "name", "date_utc", "patch"]
+    ]
+
     return jsonify(launches_df.to_dict("records")), 200
 
 
