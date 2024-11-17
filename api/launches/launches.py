@@ -70,8 +70,8 @@ def get_all_launchpads_with_launches():
 
     launches_df["date_utc"] = pd.to_datetime(launches_df["date_utc"], utc=True)
 
+    # Transform list of launches to replicated rows
     launchpads_df = launchpads_df.explode("launches")
-
     launchpads_df = launchpads_df.merge(
         launches_df,
         how="left",
@@ -80,6 +80,7 @@ def get_all_launchpads_with_launches():
         suffixes=("_launchpad", "_launch"),
     ).drop(columns=["launches", "launchpad"])
 
+    # Regroup launchpad data with nested launch data
     grouped_df = (
         launchpads_df.groupby(
             [
