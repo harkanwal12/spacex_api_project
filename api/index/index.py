@@ -11,7 +11,7 @@ def index():
 
 @index_bp.errorhandler(404)
 def no_data_found(error):
-    return jsonify(error.description), 404
+    return jsonify(str(error)), 404
 
 
 @index_bp.errorhandler(Exception)

@@ -1,4 +1,6 @@
 import pytest
+from logging import Logger
+from unittest.mock import create_autospec
 
 
 @pytest.fixture
@@ -89,3 +91,10 @@ def example_launchpad_json():
         "details": "SpaceX's original west coast launch pad for Falcon 1. It was used in a static fire test but was never employed for a launch, and was abandoned due to range scheduling conflicts arising from overflying other active pads.",
         "id": "5e9e4501f5090910d4566f83",
     }
+
+
+@pytest.fixture
+def mock_logger():
+    mock_logger = create_autospec(spec=Logger)
+    mock_logger_instance = mock_logger.return_value
+    return mock_logger_instance
