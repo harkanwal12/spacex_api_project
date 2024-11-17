@@ -17,3 +17,10 @@ def test_create_app_factory_default(mocker, mock_spacex):
 
     assert isinstance(app, Flask)
     assert isinstance(app.spacex_api, SpaceX)
+
+
+def test_app(mocker, mock_app):
+    mocker.patch("api.create_app", return_value=mock_app)
+    from api.app import app
+
+    assert isinstance(app, Flask)
