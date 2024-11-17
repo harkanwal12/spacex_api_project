@@ -2,7 +2,7 @@ from api.classes.entities import Launch, Launchpad
 
 
 def test_create_launch_entity(example_launch_json):
-    launch = Launch(**example_launch_json)
+    launch = Launch(**example_launch_json[0])
     assert isinstance(launch, Launch)
 
 
@@ -14,7 +14,7 @@ def test_create_launch_entity_required_args_only():
 
 
 def test_create_launchpad_entity(example_launchpad_json):
-    launch = Launchpad(**example_launchpad_json)
+    launch = Launchpad(**example_launchpad_json[0])
     assert isinstance(launch, Launchpad)
 
 
