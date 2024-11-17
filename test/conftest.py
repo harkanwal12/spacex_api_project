@@ -4,6 +4,9 @@ from unittest.mock import create_autospec
 import pytest
 
 from api.classes.connection import SpacexConnection
+from api.classes.spacex import SpaceX
+from api.classes.entities import Launch
+from api import create_app
 
 
 @pytest.fixture
@@ -97,6 +100,11 @@ def example_launchpad_json():
 
 
 @pytest.fixture
+def example_launches(example_launch_json):
+    return [Launch(**example_launch_json), Launch(**example_launch_json)]
+
+
+@pytest.fixture
 def mock_logger():
     mock_logger = create_autospec(spec=Logger)
     mock_logger_instance = mock_logger.return_value
@@ -108,3 +116,19 @@ def mock_connection():
     mock_conn = create_autospec(spec=SpacexConnection)
     mock_conn_instance = mock_conn.return_value
     return mock_conn_instance
+
+
+@pytest.fixture
+def mock_spacex():
+    mock_spacex = create_autospec(spec=SpaceX)
+    mock_spacex_instance = mock_spacex.return_value
+    return mock_spacex_instance
+
+
+@pytest.fixture
+def mock_app(mocker, mock_spacex):
+    mocker.patch("api.dictConfig")
+    mock_spacex_class = mocker.patch("api.SpaceX")
+    mock_spacex_class.return_value = mock_spacex
+    app = create_app(config_type="Testing")
+    return app

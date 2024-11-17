@@ -22,7 +22,6 @@ def get_all_launches():
     launches_df = pd.DataFrame(launches)
     launches_df = launches_df[["id", "name", "date_utc", "success"]]
     launches_df["date_utc"] = pd.to_datetime(launches_df["date_utc"], utc=True)
-    launches_df["year"] = launches_df["date_utc"].dt.year
     launches_df["success"] = launches_df["success"].fillna(value="Unknown")
 
     return jsonify(launches_df.to_dict("records")), 200
