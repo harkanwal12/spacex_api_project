@@ -3,7 +3,7 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import { RouterProvider, createMemoryRouter } from "react-router-dom";
 import { testRoutes } from "../routes/TestRoutes";
 import userEvent from '@testing-library/user-event'
-import {loader as launchsiteLoader} from "@/pages/Launchsites/LaunchSites";
+import {loader as launchsiteLoader} from "@/pages/LaunchSites";
 
 vi.mock('@/lib/api', () => {
     return {

@@ -72,9 +72,9 @@ class Links:
 @dataclass
 class Launch:
     id: str
-    name: str
-    date_utc: datetime
-    launchpad: str
+    name: str = None
+    date_utc: datetime = None
+    launchpad: str = None
     fairings: Optional[Fairings] = None
     links: Optional[Links] = None
     static_fire_date_utc: Optional[datetime] = None
@@ -107,14 +107,14 @@ class Images:
 
 @dataclass
 class Launchpad:
-    id: str
-    name: Optional[str]
-    full_name: str
-    locality: str
-    launches: list[str]
-    status: str
-    images: list[Images]
-    details: Optional[str]
+    id: Optional[str]
+    name: Optional[str] = None
+    full_name: Optional[str] = None
+    locality: Optional[str] = None
+    launches: Optional[list[str]] = None
+    status: Optional[str] = None
+    images: Optional[list[Images]] = None
+    details: Optional[str] = None
     region: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None

@@ -33,7 +33,9 @@ class SpacexConnection:
             # noinspection PyUnresolvedReferences
             requests.packages.urllib3.disable_warnings()
 
-    def get(self, endpoint) -> dict | list[dict]:
+    def _request(
+        self, method: str, endpoint: str, data=None
+    ) -> dict | list[dict]:
         url = self._base_url + endpoint
         log_line_pre = f"url={url}"
         log_line_post = ", ".join(
@@ -41,7 +43,9 @@ class SpacexConnection:
         )
         try:
             self._logger.debug(msg=log_line_pre)
-            response = requests.get(url, verify=self._ssl_verify)
+            response = requests.request(
+                method, url, verify=self._ssl_verify, json=data
+            )
             response.raise_for_status()
         except requests.exceptions.HTTPError as e:
             self._logger.error(msg=(str(e)))
@@ -58,4 +62,16 @@ class SpacexConnection:
             self._logger.error(msg=log_line_post.format(False, None, e))
             raise BadJSONException("Bad JSON in response") from e
 
+        if "docs" in response:
+            response = response["docs"]
+
+        if not response:
+            raise NoDataFoundException
+
         return response
+
+    def get(self, endpoint: str) -> dict | list[dict]:
+        return self._request(method="GET", endpoint=endpoint)
+
+    def post(self, endpoint: str, data: dict) -> dict | list[dict]:
+        return self._request(method="POST", endpoint=endpoint, data=data)

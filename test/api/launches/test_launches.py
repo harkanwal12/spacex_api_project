@@ -4,7 +4,7 @@ from werkzeug.exceptions import Unauthorized
 
 def test_get_all_launches_success(mock_app, example_launches):
     mock_app.spacex_api.get_all_launches.return_value = example_launches
-    response = mock_app.test_client().get("/launches/get_all_launches")
+    response = mock_app.test_client().get("/api/get_all_launches")
 
     expected_response = [
         {
@@ -28,7 +28,7 @@ def test_get_all_launches_success(mock_app, example_launches):
 def test_get_all_launches_error_404(mock_app):
     mock_app.spacex_api.get_all_launches.side_effect = NoDataFoundException
 
-    response = mock_app.test_client().get("/launches/get_all_launches")
+    response = mock_app.test_client().get("/api/get_all_launches")
 
     assert response.status_code == 404
     assert response.json == "Request returned no results"
@@ -37,7 +37,7 @@ def test_get_all_launches_error_404(mock_app):
 def test_get_all_launches_unknown_exception(mock_app):
     mock_app.spacex_api.get_all_launches.side_effect = Exception
 
-    response = mock_app.test_client().get("/launches/get_all_launches")
+    response = mock_app.test_client().get("/api/get_all_launches")
 
     assert response.status_code == 500
     assert (
@@ -49,7 +49,7 @@ def test_get_all_launches_unknown_exception(mock_app):
 def test_get_all_launches_with_http_exception(mock_app):
     mock_app.spacex_api.get_all_launches.side_effect = Unauthorized
 
-    response = mock_app.test_client().get("/launches/get_all_launches")
+    response = mock_app.test_client().get("/api/get_all_launches")
 
     assert response.status_code == 401
     assert response.json["name"] == "Unauthorized"
@@ -61,7 +61,7 @@ def test_get_all_launchpads_with_launches(
     mock_app.spacex_api.get_all_launches.return_value = example_launches
     mock_app.spacex_api.get_all_launchpads.return_value = example_launchpads
     response = mock_app.test_client().get(
-        "/launches/get_all_launchpads_with_launches"
+        "/api/get_all_launchpads_with_launches"
     )
 
     expected_response = [
@@ -108,14 +108,14 @@ def test_get_all_launchpads_with_launches_error_404(mock_app):
     mock_app.spacex_api.get_all_launchpads.side_effect = NoDataFoundException
 
     response = mock_app.test_client().get(
-        "/launches/get_all_launchpads_with_launches"
+        "/api/get_all_launchpads_with_launches"
     )
 
     assert response.status_code == 404
     assert response.json == "Request returned no results"
 
     response = mock_app.test_client().get(
-        "/launches/get_all_launchpads_with_launches"
+        "/api/get_all_launchpads_with_launches"
     )
 
     assert response.status_code == 404
@@ -129,7 +129,7 @@ def test_get_all_launchpads_with_launches_unknown_exception(
     mock_app.spacex_api.get_all_launchpads.side_effect = Exception
 
     response = mock_app.test_client().get(
-        "/launches/get_all_launchpads_with_launches"
+        "/api/get_all_launchpads_with_launches"
     )
 
     assert response.status_code == 500
@@ -139,7 +139,7 @@ def test_get_all_launchpads_with_launches_unknown_exception(
     )
 
     response = mock_app.test_client().get(
-        "/launches/get_all_launchpads_with_launches"
+        "/api/get_all_launchpads_with_launches"
     )
 
     assert response.status_code == 500
@@ -157,14 +157,14 @@ def test_get_all_launchpads_with_launches_http_exception(mock_app):
     mock_app.spacex_api.get_all_launchpads.side_effect = Unauthorized
 
     response = mock_app.test_client().get(
-        "/launches/get_all_launchpads_with_launches"
+        "/api/get_all_launchpads_with_launches"
     )
 
     assert response.status_code == 401
     assert response.json["name"] == "Unauthorized"
 
     response = mock_app.test_client().get(
-        "/launches/get_all_launchpads_with_launches"
+        "/api/get_all_launchpads_with_launches"
     )
 
     assert response.status_code == 401

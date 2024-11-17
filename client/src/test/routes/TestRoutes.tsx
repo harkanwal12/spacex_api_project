@@ -1,8 +1,8 @@
 import { Route, createRoutesFromElements } from "react-router-dom";
 import { mockLaunchesLoader, mockLaunchpadsAndLaunchesLoader } from "../MockData";
 import Home from "@/pages/Home";
-import Launches from "@/pages/Launches/Launches";
-import LaunchSites from "@/pages/Launchsites/LaunchSites";
+import Launches from "@/pages/Launches";
+import LaunchSites from "@/pages/LaunchSites";
 import Layout from "@/pages/Layout";
 
 export const testRoutes = createRoutesFromElements(

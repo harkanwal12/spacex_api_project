@@ -21,6 +21,28 @@ export class ApiClient {
       }
     }
 
+    async getAllUniqueLaunchYears() {
+      const endpoint = encodeURI("get_all_launch_years")
+      try {
+        const response = await this.axiosInstance.get(endpoint)
+        return response.data;
+      } catch (error) {
+        console.error('getAllUniqueLaunchYears Error: ', error);
+        throw error;
+      }
+    }
+
+    async getAllLaunchesInYear(year:string) {
+      const endpoint = encodeURI(`/${year}/get_all_launches_in_year`)
+      try {
+        const response = await this.axiosInstance.get(endpoint)
+        return response.data;
+      } catch (error) {
+        console.error('getAllLaunchesInYear Error: ', error);
+        throw error;
+      }
+    }
+
     async getAllLaunchpadsWithLaunches() {
         const endpoint = encodeURI("get_all_launchpads_with_launches")
         try {

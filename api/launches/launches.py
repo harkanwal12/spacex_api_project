@@ -2,55 +2,131 @@ import pandas as pd
 from flask import Blueprint, abort
 from flask import current_app as app
 from flask import jsonify
+from datetime import datetime
 
 
 from api.classes.exceptions import NoDataFoundException
+from api.classes.spacex import SpaceX
 
-launches_bp = Blueprint("launches", __name__)
+launches_bp = Blueprint("launches", __name__, url_prefix="/api")
+
+# TODO swap out SpaceX module with one from app instance
 
 
-@launches_bp.route("/api/get_all_launches", methods=["GET"])
-def get_all_launches():
-    conn = app.spacex_api
+@launches_bp.route("/get_all_launch_years", methods=["GET"])
+def get_all_launch_years():
+    conn = SpaceX(ssl_verify=False)
+
+    query = {
+        "query": {},
+        "options": {
+            "pagination": False,
+            "select": {"date_utc": 1, "id": 1},
+        },
+    }
+
     try:
-        launches = conn.get_all_launches()
+        launches = conn.get_launches(query=query)
     except NoDataFoundException as e:
         abort(404, description=str(e))
     except Exception as e:
         raise e
 
     launches_df = pd.DataFrame(launches)
-    launches_df = launches_df[["id", "name", "date_utc", "success"]]
+    launches_df["date_utc"] = pd.to_datetime(launches_df["date_utc"], utc=True)
+    unique_years = launches_df["date_utc"].dt.year.unique()
+
+    return jsonify(unique_years.tolist()), 200
+
+
+@launches_bp.route("/<year>/get_all_launches_in_year", methods=["GET"])
+def get_all_launches_in_year(year):
+    conn = SpaceX(ssl_verify=False)
+
+    year = pd.Timestamp(year)
+    next_year = year.replace(year=year.year + 1)
+
+    query = {
+        "query": {"date_utc": {"$gte": str(year), "$lt": str(next_year)}},
+        "options": {
+            "pagination": False,
+            "select": {
+                "id": 1,
+                "success": 1,
+                "details": 1,
+                "name": 1,
+                "date_utc": 1,
+            },
+        },
+    }
+
+    try:
+        launches = conn.get_launches(query=query)
+    except NoDataFoundException as e:
+        abort(404, description=str(e))
+    except Exception as e:
+        raise e
+
+    launches_df = pd.DataFrame(launches)
+    launches_df = launches_df[["id", "success", "details", "name", "date_utc"]]
     launches_df["date_utc"] = pd.to_datetime(launches_df["date_utc"], utc=True)
     launches_df["success"] = launches_df["success"].fillna(value="Unknown")
-
     return jsonify(launches_df.to_dict("records")), 200
 
 
-@launches_bp.route("/api/get_all_launchpads_with_launches", methods=["GET"])
-def get_all_launchpads_with_launches():
-    conn = app.spacex_api
+@launches_bp.route("/get_all_launchpad_names", methods=["GET"])
+def get_all_launchpad_names():
+    conn = SpaceX(ssl_verify=False)
+    query = {
+        "query": {},
+        "options": {
+            "pagination": False,
+            "select": {"id": 1, "name": 1, "full_name": 1, "id": 1},
+        },
+    }
     try:
-        launches = conn.get_all_launches()
-    except NoDataFoundException as e:
-        abort(404, description=str(e))
-    except Exception as e:
-        raise e
-
-    try:
-        launchpads = conn.get_all_launchpads()
+        launches = conn.get_launchpads(query=query)
     except NoDataFoundException as e:
         abort(404, description=str(e))
     except Exception as e:
         raise e
 
     launches_df = pd.DataFrame(launches)
-    launchpads_df = pd.DataFrame(launchpads)
+    launches_df = launches_df[["name", "full_name", "id"]]
+    return jsonify(launches_df.to_dict("records")), 200
 
-    launches_df = launches_df[
-        ["id", "name", "date_utc", "success", "launchpad"]
-    ]
-    launchpads_df = launchpads_df[
+
+@launches_bp.route("/<id>/<shortname>/get_launchpad_with_launches")
+def get_launchpad_with_launches(id, shortname):
+    conn = SpaceX()
+
+    query = {
+        "query": {
+            "id": {"$eq": id},
+            "name": {"$eq": shortname},
+        },
+        "options": {
+            "populate": ["launches"],
+            "pagination": False,
+            "select": {
+                "rockets": 0,
+                "latitude": 0,
+                "longitude": 0,
+                "timezone": 0,
+            },
+        },
+    }
+
+    try:
+        launchpad = conn.get_launchpads(query=query)
+    except NoDataFoundException as e:
+        abort(404, description=str(e))
+    except Exception as e:
+        raise e
+
+    launchpad = pd.DataFrame(launchpad)
+
+    launchpad = launchpad[
         [
             "id",
             "name",
@@ -64,50 +140,8 @@ def get_all_launchpads_with_launches():
         ]
     ]
 
-    launchpads_df["images"] = launchpads_df["images"].apply(
-        lambda x: x["large"][0]
-    )
+    launchpad["images"] = launchpad["images"].apply(lambda x: x["large"][0])
+    launchpad["date_utc"] = pd.to_datetime(launchpad["date_utc"], utc=True)
+    launchpad["success"] = launchpad["success"].fillna(value="Unknown")
 
-    launches_df["date_utc"] = pd.to_datetime(launches_df["date_utc"], utc=True)
-    launches_df["success"] = launches_df["success"].fillna(value="Unknown")
-
-    # Transform list of launches to replicated rows
-    launchpads_df = launchpads_df.explode("launches")
-    launchpads_df = launchpads_df.merge(
-        launches_df,
-        how="left",
-        left_on="launches",
-        right_on="id",
-        suffixes=("_launchpad", "_launch"),
-    ).drop(columns=["launches", "launchpad"])
-
-    # Regroup launchpad data with nested launch data
-    grouped_df = (
-        launchpads_df.groupby(
-            [
-                "id_launchpad",
-                "name_launchpad",
-                "full_name",
-                "locality",
-                "status",
-                "images",
-                "details",
-                "launch_attempts",
-            ]
-        )
-        .apply(
-            lambda x: x[
-                [
-                    "id_launch",
-                    "name_launch",
-                    "date_utc",
-                    "success",
-                ]
-            ]
-            .dropna(how="all")
-            .to_dict(orient="records")
-        )
-        .reset_index(name="launches")
-    )
-
-    return jsonify(grouped_df.to_dict("records")), 200
+    return jsonify(launchpad.to_dict("records")), 200

@@ -3,8 +3,8 @@ import { createBrowserRouter, createRoutesFromElements, Route } from "react-rout
 import Layout from "@/pages/Layout";
 import Home from "@/pages/Home"
 
-import Launches, {loader as launchesLoader} from "@/pages/Launches/Launches";
-import LaunchSites, {loader as launchsiteLoader} from "@/pages/Launchsites/LaunchSites";
+import Launches, {loader as launchesLoader} from "@/pages/Launches";
+import LaunchSites, {loader as launchsiteLoader} from "@/pages/LaunchSites";
 
 const routes = createRoutesFromElements(
   <Route path='/' element={<Layout/>}>

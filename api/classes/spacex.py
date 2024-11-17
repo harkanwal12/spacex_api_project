@@ -27,14 +27,34 @@ class SpaceX:
         """
         self._conn = SpacexConnection(base_url, ssl_verify, logger)
 
-    def get_all_launches(self) -> list[Launch]:
+    def get_launches(
+        self, launch_id: str = None, query: dict = None
+    ) -> list[Launch]:
         endpoint = "/v4/launches"
-        launches = self._conn.get(endpoint=endpoint)
-        launches_list = [Launch(**launch) for launch in launches]
-        return launches_list
+        launches = self.request_handler(endpoint, launch_id, query)
+        if isinstance(launches, list):
+            return [Launch(**launch) for launch in launches]
+        else:
+            return Launch(**launches)
 
-    def get_all_launchpads(self) -> list[Launchpad]:
+    def get_launchpads(
+        self, launchpad_id: str = None, query: dict = None
+    ) -> list[Launchpad]:
         endpoint = "/v4/launchpads"
-        launchpads = self._conn.get(endpoint=endpoint)
-        launchpad_list = [Launchpad(**launchpad) for launchpad in launchpads]
-        return launchpad_list
+        launchpads = self.request_handler(endpoint, launchpad_id, query)
+        if isinstance(launchpads, list):
+            return [Launchpad(**launch) for launch in launchpads]
+        else:
+            return Launchpad(**launchpads)
+
+    def request_handler(
+        self, endpoint: str, id: str = None, query: dict = None
+    ) -> list[dict] | dict:
+        if id:
+            data = self._conn.get(f"{endpoint + '/' + id}")
+        elif query:
+            data = self._conn.post(f"{endpoint + '/query'}", data=query)
+        else:
+            data = self._conn.get(endpoint)
+
+        return data
