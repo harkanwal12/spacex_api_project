@@ -1,9 +1,11 @@
-from api.classes.connection import SpacexConnection
-from api.classes.exceptions import NoDataFoundException, BadJSONException
-from unittest.mock import patch, Mock
 import logging
-import requests
+from unittest.mock import Mock
+
 import pytest
+import requests
+
+from api.classes.connection import SpacexConnection
+from api.classes.exceptions import BadJSONException, NoDataFoundException
 
 
 def test_connection_construction_no_args(mock_logger, mocker):
