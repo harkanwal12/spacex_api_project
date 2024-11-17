@@ -9,7 +9,6 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "env": {
-                "URL_PREFIX": "/api",
                 "FLASK_APP": "api\\app.py",
                 "FLASK_ENV": "Development",
                 "FLASK_DEBUG": "1"

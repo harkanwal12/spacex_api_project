@@ -6,10 +6,10 @@ from flask import jsonify
 
 from api.classes.exceptions import NoDataFoundException
 
-launches_bp = Blueprint("launches", __name__, url_prefix="/launches")
+launches_bp = Blueprint("launches", __name__)
 
 
-@launches_bp.route("/get_all_launches", methods=["GET"])
+@launches_bp.route("/api/get_all_launches", methods=["GET"])
 def get_all_launches():
     conn = app.spacex_api
     try:
@@ -27,7 +27,7 @@ def get_all_launches():
     return jsonify(launches_df.to_dict("records")), 200
 
 
-@launches_bp.route("/get_all_launchpads_with_launches", methods=["GET"])
+@launches_bp.route("/api/get_all_launchpads_with_launches", methods=["GET"])
 def get_all_launchpads_with_launches():
     conn = app.spacex_api
     try:

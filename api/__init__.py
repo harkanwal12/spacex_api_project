@@ -7,7 +7,7 @@ from api.config import config
 
 
 def create_app(config_type: str = None) -> Flask:
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="../client/dist", static_url_path="/")
 
     if config_type is None:
         config_type = "Default"
