@@ -69,6 +69,7 @@ def get_all_launchpads_with_launches():
     )
 
     launches_df["date_utc"] = pd.to_datetime(launches_df["date_utc"], utc=True)
+    launches_df["success"] = launches_df["success"].fillna(value="Unknown")
 
     # Transform list of launches to replicated rows
     launchpads_df = launchpads_df.explode("launches")
