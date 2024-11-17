@@ -1,6 +1,9 @@
-import pytest
 from logging import Logger
 from unittest.mock import create_autospec
+
+import pytest
+
+from api.classes.connection import SpacexConnection
 
 
 @pytest.fixture
@@ -98,3 +101,10 @@ def mock_logger():
     mock_logger = create_autospec(spec=Logger)
     mock_logger_instance = mock_logger.return_value
     return mock_logger_instance
+
+
+@pytest.fixture
+def mock_connection():
+    mock_conn = create_autospec(spec=SpacexConnection)
+    mock_conn_instance = mock_conn.return_value
+    return mock_conn_instance
