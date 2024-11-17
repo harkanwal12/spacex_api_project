@@ -27,10 +27,7 @@ def test_spacex_get_all_launches_success(
     mocker, mock_connection, example_launch_json
 ):
 
-    mock_connection.get.return_value = [
-        example_launch_json,
-        example_launch_json,
-    ]
+    mock_connection.get.return_value = example_launch_json
     mock_conn = mocker.patch("api.classes.spacex.SpacexConnection")
     mock_conn.return_value = mock_connection
 
