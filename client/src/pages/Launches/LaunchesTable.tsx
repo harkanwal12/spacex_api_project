@@ -54,20 +54,21 @@ export function LaunchesTable<TData, TValue>({
           className="border border-gray-300 rounded-md p-2"
           onChange={e => table.getColumn("date_utc")?.setFilterValue(e.target.value)}
           value={(table.getColumn("date_utc")?.getFilterValue() as string) ?? ""}
+          data-testid="yearSelector"
         >
-          <option value="">All</option>
+          <option data-testid="yearSelectorOptionAll" value="">All</option>
           {years.map((year, index) => (
-            <option key={index} value={year}>{year}</option>
+            <option data-testid={`yearSelectorOption${year}`} key={index} value={year}>{year}</option>
           ))}
         </select>
       </div>
       <div className="flex items-center space-x-2">
       <span>Number of Rocket Launches:</span>
-      <div>{table.getRowModel().rows.length}</div>
+      <div data-testid="launchesTableRowCounter">{table.getRowModel().rows.length}</div>
       </div>
 
     </div>
-    <div className="rounded-md border w-full">
+    <div data-testid="launchesTableContainer" className="rounded-md border w-full">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

@@ -39,7 +39,7 @@ function mockLaunchpadsAndLaunchesLoader() {
             "details": "somedetails",
             "full_name": "test name",
             "id_launchpad": "test_id_2",
-            "images": "https://i.imgur.com/7uXe1Kv.png",
+            "images": "some other link",
             "launch_attempts": 0,
             "launches": [],
             "locality": "test Force Base",

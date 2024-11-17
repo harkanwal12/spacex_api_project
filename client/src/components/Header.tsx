@@ -23,18 +23,18 @@ const Header = () => {
         <NavigationMenu>
             <NavigationMenuList>
                 <NavigationMenuItem>
-                <Link to={"/launches"}>
-                    <NavigationMenuLink className={`${navigationMenuTriggerStyle()} hover:bg-gray-100 rounded`}>
-                    Launches
+                    <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} hover:bg-gray-100 rounded`}>
+                        <Link to={"/launches"}>
+                        Launches
+                        </Link>
                     </NavigationMenuLink>
-                </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                <Link to={"/launchsites"}>
-                    <NavigationMenuLink className={`${navigationMenuTriggerStyle()} hover:bg-gray-100 rounded`}>
-                    Launch Sites
+                    <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} hover:bg-gray-100 rounded`}>
+                        <Link to={"/launchsites"}>
+                        Launch Sites
+                        </Link>
                     </NavigationMenuLink>
-                </Link>
                 </NavigationMenuItem>
             </NavigationMenuList>
         </NavigationMenu>

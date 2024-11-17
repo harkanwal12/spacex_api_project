@@ -22,20 +22,16 @@ export type Launchsite = {
   launches: Launch[]
 }
 
-export type LaunchsiteData = {
-  launchsites: Launchsite[]
-}
-
 export async function loader() {
 
   let api = new ApiClient();
   let launchsites = await api.getAllLaunchpadsWithLaunches()
   
-  return { launchsites }
+  return launchsites
 }
 
 const LaunchSites = () => {
-  const {launchsites} = useLoaderData() as LaunchsiteData
+  const launchsites = useLoaderData() as Launchsite[]
   const [selectedLaunchSite, setSelectedLaunchSite] = useState<Launchsite | null>(null);
 
 
@@ -70,6 +66,7 @@ const LaunchSites = () => {
           <select
             className="border border-gray-300 rounded-md p-2"
             onChange={onLaunchSiteSelectionChange}
+            data-testid="launchSiteSelector"
           >
             <option value="">Select...</option>
             {launchsites.map((launchsite) => (
@@ -86,9 +83,9 @@ const LaunchSites = () => {
             <h1 className="font-bold">Launch Site Metadata</h1>
               <div className="grid grid-cols-2">
               <div className="min-h-32 max-h-fit border p-4">
-                <img src={selectedLaunchSite?.images} max-width="100%" height="auto"/>
+                <img data-testid="launchSiteImg" src={selectedLaunchSite?.images} max-width="100%" height="auto"/>
               </div>
-              <table className="border border-gray-300">
+              <table data-testid="metaDataTable" className="border border-gray-300">
                 <tbody>
                   <tr>
                     <td className="border border-gray-300 p-2">Short Name</td>
@@ -111,7 +108,7 @@ const LaunchSites = () => {
             </div>
             <p>{selectedLaunchSite?.details}</p>
           </div>
-          <div className="w-1/2">
+          <div data-testid="LaunchesTableContainer" className="w-1/2">
             <LaunchSitesTable columns={columns} data={selectedLaunchSite?.launches}/>
           </div>
         </div>

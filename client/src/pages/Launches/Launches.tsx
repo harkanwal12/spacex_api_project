@@ -10,20 +10,16 @@ export type Launch = {
     date_utc: Date
   }
 
-  export type LaunchData = {
-    launches: Launch[]
-  }
-
 export async function loader() {
 
     let api = new ApiClient();
     let launches = await api.getAllLaunches()
     
-    return { launches }
+    return launches
 }
 
 const Launches = () => {
-    const {launches} = useLoaderData() as LaunchData;
+    const launches = useLoaderData() as Launch[];
 
     const years = [...new Set(launches.map(launch => new Date(launch.date_utc).getFullYear()))]
 
