@@ -1,7 +1,6 @@
-import * as React from "react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
-import { ChevronDown } from "lucide-react"
+import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -65,10 +64,7 @@ NavigationMenuViewport.displayName =
   NavigationMenuPrimitive.Viewport.displayName
 
 export {
-  navigationMenuTriggerStyle,
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuViewport
+  NavigationMenu, NavigationMenuItem,
+  NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle, NavigationMenuViewport
 }
+
