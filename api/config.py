@@ -4,10 +4,6 @@ class Config:
     LOG_LEVEL = "INFO"
     BASE_URL = "https://api.spacexdata.com"
 
-    @staticmethod
-    def __init__(self):
-        pass
-
 
 class TestingConfig(Config):
     TESTING = True
