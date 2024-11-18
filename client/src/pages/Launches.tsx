@@ -10,6 +10,8 @@ import {
     SelectValue,
   } from "@/components/ui/select"
 
+import { Badge } from "@/components/ui/badge"
+
 export type Launch = {
     id: string
     success: boolean
@@ -72,6 +74,23 @@ const Launches = () => {
         {
             accessorKey: "success",
             header: () => <div className="text-center">Success</div>,
+            cell: ({ cell }:any) => {
+                let success = cell.getValue()
+                switch (success) {
+                    case true:
+                        return (
+                            <Badge variant="green">Success</Badge>
+                        )
+                    case false:
+                        return (
+                            <Badge variant="red">Failure</Badge>
+                        )
+                    case "Unknown":
+                        return (
+                            <Badge variant="grey">Unknown</Badge>
+                        )
+                }
+            },
         },
         {
             accessorKey: "date_utc",
