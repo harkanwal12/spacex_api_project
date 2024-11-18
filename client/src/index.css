@@ -19,3 +19,11 @@
 .box:hover {
   @apply transform scale-105 bg-slate-950;
 }
+
+.launchSiteHeaders {
+  @apply text-xl text-gray-300;
+}
+
+.launchSiteValues {
+  @apply font-bold text-2xl text-gray-200;
+}

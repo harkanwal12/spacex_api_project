@@ -116,37 +116,33 @@ const LaunchSites = () => {
                 <img data-testid="launchSiteImg" src={selectedLaunchSite?.images} max-width="100%" height="auto"/>
               </div>
               <div className="uppercase grid grid-cols-3 ">
-                <div className="justify-items-start pl-3">
-                  <h3 className="text-sm text-gray-200">Short Name</h3>
-                  <p className="font-bold text-gray-300">{selectedLaunchSite?.name}</p>
+                <div className=" content-evenly col-span-3">
+                  <h3 className="launchSiteHeaders">Location</h3>
+                  <p className="launchSiteValues">{`${selectedLaunchSite?.locality}, ${selectedLaunchSite?.region}`}</p>
                 </div>
-                <div className="justify-items-start pl-3 col-span-2">
-                  <h3 className="text-sm text-gray-200">Location</h3>
-                  <p className="font-bold text-gray-300">{`${selectedLaunchSite?.locality}, ${selectedLaunchSite?.region}`}</p>
+                <div className=" content-evenly">
+                  <h3 className="launchSiteHeaders">Launch Attempts</h3>
+                  <p className="launchSiteValues">{selectedLaunchSite?.launch_attempts}</p>
                 </div>
-                <div className="justify-items-start pl-3">
-                  <h3 className="text-sm text-gray-200">Launch Attempts</h3>
-                  <p className="font-bold text-gray-300">{selectedLaunchSite?.launch_attempts}</p>
+                <div className=" content-evenly">
+                  <h3 className="launchSiteHeaders">Launch Successes</h3>
+                  <p className="launchSiteValues">{selectedLaunchSite?.launch_successes}</p>
                 </div>
-                <div className="justify-items-start pl-3">
-                  <h3 className="text-sm text-gray-200">Launch Successes</h3>
-                  <p className="font-bold text-gray-300">{selectedLaunchSite?.launch_successes}</p>
+                <div className="content-evenly">
+                  <h3 className="launchSiteHeaders">Success Rate</h3>
+                  <p className="launchSiteValues">{selectedLaunchSite?.launch_success_rate}</p>
                 </div>
-                <div className="justify-items-start pl-3">
-                  <h3 className="text-sm text-gray-200">Success Rate</h3>
-                  <p className="font-bold text-gray-300">{selectedLaunchSite?.launch_success_rate}</p>
+                <div className="content-evenly">
+                  <h3 className="launchSiteHeaders">Status</h3>
+                  <p className="launchSiteValues">{selectedLaunchSite?.status}</p>
                 </div>
-                <div className="justify-items-start pl-3">
-                  <h3 className="text-sm text-gray-200">Status</h3>
-                  <p className="font-bold text-gray-300">{selectedLaunchSite?.status}</p>
+                <div className=" content-evenly">
+                  <h3 className="launchSiteHeaders">Latitude</h3>
+                  <p className="launchSiteValues">{selectedLaunchSite?.latitude}</p>
                 </div>
-                <div className="justify-items-start pl-3">
-                  <h3 className="text-sm text-gray-200">Latitude</h3>
-                  <p className="font-bold text-gray-300">{selectedLaunchSite?.latitude}</p>
-                </div>
-                <div className="justify-items-start pl-3">
-                  <h3 className="text-sm text-gray-200">Longitude</h3>
-                  <p className="font-bold text-gray-300">{selectedLaunchSite?.longitude}</p>
+                <div className=" content-evenly">
+                  <h3 className="launchSiteHeaders">Longitude</h3>
+                  <p className="launchSiteValues">{selectedLaunchSite?.longitude}</p>
                 </div>
               </div>
             </div>
