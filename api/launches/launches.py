@@ -80,7 +80,7 @@ def get_all_launchpad_names():
         "query": {},
         "options": {
             "pagination": False,
-            "select": {"id": 1, "name": 1, "full_name": 1, "id": 1},
+            "select": {"id": 1, "name": 1, "full_name": 1},
         },
     }
     try:
@@ -97,7 +97,7 @@ def get_all_launchpad_names():
 
 @launches_bp.route("/<id>/<shortname>/get_launchpad_with_launches")
 def get_launchpad_with_launches(id, shortname):
-    conn = SpaceX()
+    conn = SpaceX(ssl_verify=False)
 
     query = {
         "query": {
@@ -140,7 +140,5 @@ def get_launchpad_with_launches(id, shortname):
     ]
 
     launchpad["images"] = launchpad["images"].apply(lambda x: x["large"][0])
-    launchpad["date_utc"] = pd.to_datetime(launchpad["date_utc"], utc=True)
-    launchpad["success"] = launchpad["success"].fillna(value="Unknown")
 
     return jsonify(launchpad.to_dict("records")), 200

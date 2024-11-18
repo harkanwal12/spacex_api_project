@@ -34,14 +34,9 @@ const Launches = () => {
     const launchYears = useLoaderData() as string[];
 
     const onYearSelectionChange = async (value: string) => {
-        if (value === "default") {
-            setLaunches([])
-        } else {
-            let api = new ApiClient()
-            let launches = await api.getAllLaunchesInYear(value)
-            setLaunches(launches)
-        }
-        
+        let api = new ApiClient()
+        let launches = await api.getAllLaunchesInYear(value)
+        setLaunches(launches)
     }
 
     const columns = useMemo(() => [

@@ -10,13 +10,13 @@ export class ApiClient {
       });
     }
   
-    async getAllLaunches() {
-      const endpoint = encodeURI("get_all_launches")
+    async getAllLaunchpadNames() {
+      const endpoint = encodeURI("get_all_launchpad_names")
       try {
         const response = await this.axiosInstance.get(endpoint)
         return response.data;
       } catch (error) {
-        console.error('getAllProgs Error: ', error);
+        console.error('getAllLaunchpadNames Error: ', error);
         throw error;
       }
     }
@@ -43,13 +43,13 @@ export class ApiClient {
       }
     }
 
-    async getAllLaunchpadsWithLaunches() {
-        const endpoint = encodeURI("get_all_launchpads_with_launches")
+    async getLaunchpadWithLaunches(id:string, shortname:string) {
+        const endpoint = encodeURI(`${id}/${shortname}/get_launchpad_with_launches`)
         try {
           const response = await this.axiosInstance.get(endpoint)
           return response.data;
         } catch (error) {
-          console.error('getAllLaunchpadsWithLaunches Error: ', error);
+          console.error('getLaunchpadWithLaunches Error: ', error);
           throw error;
         }
       }

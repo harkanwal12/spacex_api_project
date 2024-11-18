@@ -2,6 +2,14 @@ import { useLoaderData } from "react-router-dom";
 import { ApiClient } from "@/lib/api";
 import { DataTable } from "@/components/DataTable";
 import { useMemo, useState } from 'react';
+import { Badge } from "@/components/ui/badge"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export type Launch = {
   id_launch: string
@@ -11,8 +19,8 @@ export type Launch = {
 }
 
 export type Launchsite = {
-  id_launchpad: string
-  name_launchpad: string
+  id: string
+  name: string
   full_name: string
   locality: string
   status: string
@@ -25,25 +33,26 @@ export type Launchsite = {
 export async function loader() {
 
   let api = new ApiClient();
-  let launchsites = await api.getAllLaunchpadsWithLaunches()
+  let launchsiteNames = await api.getAllLaunchpadNames()
   
-  return launchsites
+  return launchsiteNames
 }
 
 const LaunchSites = () => {
-  const launchsites = useLoaderData() as Launchsite[]
+  const launchsiteNames = useLoaderData() as Launchsite[]
   const [selectedLaunchSite, setSelectedLaunchSite] = useState<Launchsite | null>(null);
 
 
-  const onLaunchSiteSelectionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedName = event.target.value;
-    const selectedLaunchSite = launchsites.find(obj => obj.name_launchpad === selectedName) || null;
-    setSelectedLaunchSite(selectedLaunchSite)
+  const onLaunchSiteSelectionChange = async (id: string) => {
+    const launchsite = launchsiteNames.find(obj => obj.id === id)
+    let api = new ApiClient()
+    let launchesite = await api.getLaunchpadWithLaunches(id, launchsite?.name!)
+    setSelectedLaunchSite(launchesite[0])
   }
 
   const columns = useMemo(() => [
     {
-        accessorKey: "name_launch",
+        accessorKey: "name",
         header: () => <div className="text-center">Name</div>,
     },
     {
@@ -52,7 +61,24 @@ const LaunchSites = () => {
     },
     {
       accessorKey: "success",
-      header: () => <div className="text-center">Success</div>
+      header: () => <div className="text-center">Success</div>,
+      cell: ({ cell }:any) => {
+        let success = cell.getValue()
+        switch (success) {
+            case true:
+                return (
+                    <Badge variant="green">Success</Badge>
+                )
+            case false:
+                return (
+                    <Badge variant="red">Failure</Badge>
+                )
+            case "Unknown":
+                return (
+                    <Badge variant="grey">Unknown</Badge>
+                )
+        }
+    },
     },
     ],
     [],
@@ -60,36 +86,30 @@ const LaunchSites = () => {
 
   return (
     <div className="flex flex-col gap-4 p-3">
-      <div className="flex flex-col items-center justify-items-center">
-        <div className="flex items-center space-x-2">
-        <span>Select launch site:</span>
-          <select
-            className="border border-gray-300 rounded-md p-2"
-            onChange={onLaunchSiteSelectionChange}
-            data-testid="launchSiteSelector"
-          >
-            <option value="">Select...</option>
-            {launchsites.map((launchsite) => (
-            <option key={launchsite.id_launchpad} value={launchsite.name_launchpad}>
-              {launchsite.full_name}
-            </option>
-          ))}
-          </select>
-        </div>
+      <div className="flex flex-col">
+        <Select onValueChange={onLaunchSiteSelectionChange}>
+        <SelectTrigger className="text-white w-[500px] bg-zinc-900">
+            <SelectValue placeholder="Select a launch site" />
+        </SelectTrigger>
+        <SelectContent className="text-white bg-zinc-900" >
+            {launchsiteNames.map((launchsite) => (
+                <SelectItem  key={launchsite.id} value={launchsite.id}>{launchsite.full_name}</SelectItem>
+            ))}
+        </SelectContent>
+        </Select>
       </div>
       {selectedLaunchSite ? 
-        <div className="flex flex-row justify-between gap-5">
+        <div className="text-white flex flex-row justify-between gap-5">
           <div className="flex flex-col place-items-center w-1/2 gap-2">
-            <h1 className="font-bold">Launch Site Metadata</h1>
               <div className="grid grid-cols-2">
-              <div className="min-h-32 max-h-fit border p-4">
+              <div className="min-h-32 max-h-fit bg-gray-900 border p-4 ">
                 <img data-testid="launchSiteImg" src={selectedLaunchSite?.images} max-width="100%" height="auto"/>
               </div>
-              <table data-testid="metaDataTable" className="border border-gray-300">
+              <table data-testid="metaDataTable" className="border bg-gray-900 text-white border-gray-300">
                 <tbody>
                   <tr>
                     <td className="border border-gray-300 p-2">Short Name</td>
-                    <td className="border border-gray-300 p-2">{selectedLaunchSite?.name_launchpad}</td>
+                    <td className="border border-gray-300 p-2">{selectedLaunchSite?.name}</td>
                   </tr>
                   <tr>
                     <td className="border border-gray-300 p-2">Location</td>
