@@ -43,8 +43,8 @@ def create_app(config_type: str = None) -> Flask:
     )
 
     @app.errorhandler(404)
-    def no_data_found(error):
-        return jsonify("Request returned no results"), 404
+    def not_found():
+        return app.send_static_file("index.html")
 
     @app.errorhandler(Exception)
     def handle_exception(error):

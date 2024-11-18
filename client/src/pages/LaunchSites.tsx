@@ -2,6 +2,7 @@ import { useLoaderData } from "react-router-dom";
 import { ApiClient } from "@/lib/api";
 import { DataTable } from "@/components/DataTable";
 import { useMemo, useState } from 'react';
+import { format } from 'date-fns';
 import { Badge } from "@/components/ui/badge"
 import {
   Select,
@@ -27,6 +28,11 @@ export type Launchsite = {
   images: string
   details: string
   launch_attempts: number
+  launch_successes: number
+  launch_success_rate: string
+  region: string
+  latitude: number
+  longitude: number
   launches: Launch[]
 }
 
@@ -52,12 +58,16 @@ const LaunchSites = () => {
 
   const columns = useMemo(() => [
     {
-        accessorKey: "name",
-        header: () => <div className="text-center">Name</div>,
+      accessorKey: "name",
+      header: () => <div className="text-center">Launch Name</div>,
     },
     {
-        accessorKey: "date_utc",
-        header: () => <div className="text-center">Date</div>
+      accessorKey: "date_utc",
+      header: () => <div className="text-center">Date of Launch</div>,
+      cell: ({ cell }:any) => {
+        let date = cell.getValue()
+          return format(new Date(date), 'dd MMM yyyy, HH:mm')
+      },
     },
     {
       accessorKey: "success",
@@ -65,28 +75,28 @@ const LaunchSites = () => {
       cell: ({ cell }:any) => {
         let success = cell.getValue()
         switch (success) {
-            case true:
-                return (
-                    <Badge variant="green">Success</Badge>
-                )
-            case false:
-                return (
-                    <Badge variant="red">Failure</Badge>
-                )
-            case "Unknown":
-                return (
-                    <Badge variant="grey">Unknown</Badge>
-                )
+          case true:
+              return (
+                  <Badge variant="green">Success</Badge>
+              )
+          case false:
+              return (
+                  <Badge variant="red">Failure</Badge>
+              )
+          default:
+              return (
+                  <Badge variant="grey">Unknown</Badge>
+              )
         }
-    },
+      },
     },
     ],
     [],
 )
 
   return (
-    <div className="flex flex-col gap-4 p-3">
-      <div className="flex flex-col">
+    <div className="flex flex-col items-center gap-4 p-3">
+      <div className="flex w-full">
         <Select onValueChange={onLaunchSiteSelectionChange}>
         <SelectTrigger className="text-white w-[500px] bg-zinc-900">
             <SelectValue placeholder="Select a launch site" />
@@ -100,41 +110,65 @@ const LaunchSites = () => {
       </div>
       {selectedLaunchSite ? 
         <div className="text-white flex flex-row justify-between gap-5">
-          <div className="flex flex-col place-items-center w-1/2 gap-2">
-              <div className="grid grid-cols-2">
-              <div className="min-h-32 max-h-fit bg-gray-900 border p-4 ">
+          <div className="flex flex-col place-items-center w-8/12 gap-2">
+              <div className="grid grid-cols-2 gap-5">
+              <div className="min-h-32 max-h-fit bg-gray-900 border p-2">
                 <img data-testid="launchSiteImg" src={selectedLaunchSite?.images} max-width="100%" height="auto"/>
               </div>
-              <table data-testid="metaDataTable" className="border bg-gray-900 text-white border-gray-300">
-                <tbody>
-                  <tr>
-                    <td className="border border-gray-300 p-2">Short Name</td>
-                    <td className="border border-gray-300 p-2">{selectedLaunchSite?.name}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 p-2">Location</td>
-                    <td className="border border-gray-300 p-2">{selectedLaunchSite?.locality}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 p-2">Status</td>
-                    <td className="border border-gray-300 p-2">{selectedLaunchSite?.status}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 p-2">Launch Attempts</td>
-                    <td className="border border-gray-300 p-2">{selectedLaunchSite?.launch_attempts}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="uppercase grid grid-cols-3 ">
+                <div className="justify-items-start pl-3">
+                  <h3 className="text-sm text-gray-200">Short Name</h3>
+                  <p className="font-bold text-gray-300">{selectedLaunchSite?.name}</p>
+                </div>
+                <div className="justify-items-start pl-3 col-span-2">
+                  <h3 className="text-sm text-gray-200">Location</h3>
+                  <p className="font-bold text-gray-300">{`${selectedLaunchSite?.locality}, ${selectedLaunchSite?.region}`}</p>
+                </div>
+                <div className="justify-items-start pl-3">
+                  <h3 className="text-sm text-gray-200">Launch Attempts</h3>
+                  <p className="font-bold text-gray-300">{selectedLaunchSite?.launch_attempts}</p>
+                </div>
+                <div className="justify-items-start pl-3">
+                  <h3 className="text-sm text-gray-200">Launch Successes</h3>
+                  <p className="font-bold text-gray-300">{selectedLaunchSite?.launch_successes}</p>
+                </div>
+                <div className="justify-items-start pl-3">
+                  <h3 className="text-sm text-gray-200">Success Rate</h3>
+                  <p className="font-bold text-gray-300">{selectedLaunchSite?.launch_success_rate}</p>
+                </div>
+                <div className="justify-items-start pl-3">
+                  <h3 className="text-sm text-gray-200">Status</h3>
+                  <p className="font-bold text-gray-300">{selectedLaunchSite?.status}</p>
+                </div>
+                <div className="justify-items-start pl-3">
+                  <h3 className="text-sm text-gray-200">Latitude</h3>
+                  <p className="font-bold text-gray-300">{selectedLaunchSite?.latitude}</p>
+                </div>
+                <div className="justify-items-start pl-3">
+                  <h3 className="text-sm text-gray-200">Longitude</h3>
+                  <p className="font-bold text-gray-300">{selectedLaunchSite?.longitude}</p>
+                </div>
+              </div>
             </div>
-            <p>{selectedLaunchSite?.details}</p>
+            <div>
+            <p className="text-lg">{selectedLaunchSite?.details}</p>
+            </div>
           </div>
-          <div data-testid="LaunchesTableContainer" className="w-1/2">
+          <div data-testid="LaunchesTableContainer" className="w-4/12">
             <DataTable columns={columns} data={selectedLaunchSite?.launches}/>
           </div>
         </div>
       :
-        <p>No Launch Site selected</p>  
-      }
+      <div className="text-white flex-col w-[40vw] min-h-[70vh] items-center inline-flex justify-center">
+          <div className="w-100 text-primary text-3xl font-bold uppercase ">
+            No Launch Site selected
+          </div>
+          <div>
+              <p className="italic text-center text-muted-foreground text-xl font-medium mt-8">
+              Select a launch site to explore its history and the launches that happened there.
+              </p>
+          </div>
+      </div>}
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { useLoaderData } from "react-router-dom";
 import { ApiClient } from "@/lib/api";
 import { DataTable } from "@/components/DataTable";
+import { format } from 'date-fns';
 import { useMemo, useState } from 'react';
 import {
     Select,
@@ -89,7 +90,11 @@ const Launches = () => {
         },
         {
             accessorKey: "date_utc",
-            header: () => <div className="text-center">Date</div>
+            header: () => <div className="text-center">Date</div>,
+            cell: ({ cell }:any) => {
+                let date = cell.getValue()
+                  return format(new Date(date), 'dd MMM yyyy, HH:mm')
+              },
         },
         ],
         [],
@@ -115,7 +120,16 @@ const Launches = () => {
                             <div data-testid="launchesTableRowCounter">{launchesData.length}</div>
                         </div>}
             </div>
-            {launchesData.length > 0 && <DataTable columns={columns} data={launchesData}/>}
+            {launchesData.length > 0 ? <DataTable columns={columns} data={launchesData}/> 
+            : 
+            <div className="text-white flex-col w-[40vw] min-h-[70vh] items-center inline-flex justify-center">
+                <div className="w-100 text-primary text-3xl font-bold uppercase ">No year selected</div>
+                <div>
+            <p className="italic text-center text-muted-foreground text-xl font-medium mt-8">
+              Select a year to discover the launches that took place
+            </p>
+            </div>
+                </div>}
         </div>
     )
 }

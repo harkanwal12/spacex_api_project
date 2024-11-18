@@ -1,8 +1,9 @@
 import pandas as pd
-from flask import Blueprint, abort
+from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify
-from datetime import datetime
+from werkzeug.exceptions import NotFound
+import numpy as np
 
 
 from api.classes.exceptions import NoDataFoundException
@@ -28,7 +29,7 @@ def get_all_launch_years():
     try:
         launches = conn.get_launches(query=query)
     except NoDataFoundException as e:
-        abort(404, description=str(e))
+        raise NotFound("No data found for request")
     except Exception as e:
         raise e
 
@@ -56,13 +57,12 @@ def get_all_launches_in_year(year):
     try:
         launches = conn.get_launches(query=query)
     except NoDataFoundException as e:
-        abort(404, description=str(e))
+        raise NotFound("No data found for request")
     except Exception as e:
         raise e
 
     launches_df = pd.DataFrame(launches)
     launches_df["date_utc"] = pd.to_datetime(launches_df["date_utc"], utc=True)
-    launches_df["success"] = launches_df["success"].fillna(value="Unknown")
     launches_df["patch"] = launches_df["links"].apply(
         lambda x: x["patch"]["small"]
     )
@@ -86,7 +86,7 @@ def get_all_launchpad_names():
     try:
         launches = conn.get_launchpads(query=query)
     except NoDataFoundException as e:
-        abort(404, description=str(e))
+        raise NotFound("No data found for request")
     except Exception as e:
         raise e
 
@@ -109,8 +109,6 @@ def get_launchpad_with_launches(id, shortname):
             "pagination": False,
             "select": {
                 "rockets": 0,
-                "latitude": 0,
-                "longitude": 0,
                 "timezone": 0,
             },
         },
@@ -119,7 +117,7 @@ def get_launchpad_with_launches(id, shortname):
     try:
         launchpad = conn.get_launchpads(query=query)
     except NoDataFoundException as e:
-        abort(404, description=str(e))
+        raise NotFound("No data found for request")
     except Exception as e:
         raise e
 
@@ -136,9 +134,25 @@ def get_launchpad_with_launches(id, shortname):
             "images",
             "details",
             "launch_attempts",
+            "launch_successes",
+            "region",
+            "latitude",
+            "longitude",
         ]
     ]
 
     launchpad["images"] = launchpad["images"].apply(lambda x: x["large"][0])
+    launchpad["launch_success_rate"] = (
+        launchpad["launch_successes"] / launchpad["launch_attempts"]
+    ) * 100
+    if not np.isnan(launchpad["launch_success_rate"][0]):
+        launchpad["launch_success_rate"] = launchpad[
+            "launch_success_rate"
+        ].round()
+        launchpad["launch_success_rate"] = (
+            launchpad["launch_success_rate"].astype(int).astype(str) + "%"
+        )
+    else:
+        launchpad["launch_success_rate"] = "N/A"
 
     return jsonify(launchpad.to_dict("records")), 200
