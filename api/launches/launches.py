@@ -63,12 +63,29 @@ def get_all_launches_in_year(year):
 
     launches_df = pd.DataFrame(launches)
     launches_df["date_utc"] = pd.to_datetime(launches_df["date_utc"], utc=True)
-    launches_df["patch"] = launches_df["links"].apply(
-        lambda x: x["patch"]["small"]
+    links_df = pd.json_normalize(launches_df["links"])
+    launches_df = pd.concat(
+        [
+            launches_df.drop(columns=["links"]),
+            links_df[
+                ["webcast", "wikipedia", "patch.small", "reddit.recovery"]
+            ],
+        ],
+        axis=1,
     )
     launches_df = launches_df[
-        ["id", "success", "details", "name", "date_utc", "patch"]
-    ]
+        [
+            "id",
+            "success",
+            "details",
+            "name",
+            "date_utc",
+            "webcast",
+            "wikipedia",
+            "patch.small",
+            "reddit.recovery",
+        ]
+    ].rename(columns={"patch.small": "patch", "reddit.recovery": "reddit"})
 
     return jsonify(launches_df.to_dict("records")), 200
 
