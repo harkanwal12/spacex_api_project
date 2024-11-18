@@ -2,6 +2,13 @@ import { useLoaderData } from "react-router-dom";
 import { ApiClient } from "@/lib/api";
 import { DataTable } from "@/components/DataTable";
 import { useMemo, useState } from 'react';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
 
 export type Launch = {
     id: string
@@ -24,13 +31,12 @@ const Launches = () => {
 
     const launchYears = useLoaderData() as string[];
 
-    const onYearSelectionChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedYear = event.target.value;
-        if (selectedYear === "default") {
+    const onYearSelectionChange = async (value: string) => {
+        if (value === "default") {
             setLaunches([])
         } else {
             let api = new ApiClient()
-            let launches = await api.getAllLaunchesInYear(selectedYear)
+            let launches = await api.getAllLaunchesInYear(value)
             setLaunches(launches)
         }
         
@@ -77,23 +83,23 @@ const Launches = () => {
 
     return (
         <div className="flex p-2 flex-col gap-2 items-center">
-            <div className="flex space-x-20">
-                <div className="flex items-center space-x-2">
-                        <select
-                        className="border border-gray-300 rounded-md p-2"
-                        onChange={e => onYearSelectionChange(e)}
-                        data-testid="yearSelector"
-                        >
-                        <option data-testid="yearSelectorOptionAll" value="default">Select year of launches</option>
-                        {launchYears.map((year, index) => (
-                            <option data-testid={`yearSelectorOptionAll${year}`} key={index} value={year}>{year}</option>
-                        ))}
-                        </select>
-                    {launchesData.length > 0 && <div className="flex items-center space-x-2">
-                        <span className="text-white">Number of Rocket Launches:</span>
-                        <div data-testid="launchesTableRowCounter">{launchesData.length}</div>
-                    </div>}
-                </div>
+                <div className="flex w-full space-x-7">
+                        <Select onValueChange={onYearSelectionChange}>
+                        <SelectTrigger className="text-white w-[140px] bg-zinc-900">
+                            <SelectValue placeholder="Select a year" />
+                        </SelectTrigger>
+                        <SelectContent className="text-white bg-zinc-900" >
+                            {launchYears.map((year, index) => (
+                                <SelectItem  data-testid={`yearSelectorOptionAll${year}`} key={index} value={year}>{year}</SelectItem>
+                            ))}
+                        </SelectContent>
+                        </Select>
+
+                    {launchesData.length > 0 && 
+                        <div className="text-white flex items-center space-x-2">
+                            <span >Number of Launches:</span>
+                            <div data-testid="launchesTableRowCounter">{launchesData.length}</div>
+                        </div>}
             </div>
             {launchesData.length > 0 && <DataTable columns={columns} data={launchesData}/>}
         </div>
