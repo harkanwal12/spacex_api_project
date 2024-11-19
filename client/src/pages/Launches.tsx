@@ -120,6 +120,7 @@ const Launches = () => {
                 return (
                 <div className="text-center">
                     <Button
+                    data-testid="nameSortButton"
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
@@ -262,7 +263,7 @@ const Launches = () => {
         <div className="flex p-2 flex-col gap-2 items-center">
                 <div className="flex w-full space-x-7">
                         <Select onValueChange={onYearSelectionChange}>
-                        <SelectTrigger data-testid="yearSelector"  className="text-white w-[140px] bg-zinc-900">
+                        <SelectTrigger data-testid="yearSelector" className="text-white w-[140px] bg-zinc-900">
                             <SelectValue placeholder="Select a year" />
                         </SelectTrigger>
                         <SelectContent className="text-white bg-zinc-900" >

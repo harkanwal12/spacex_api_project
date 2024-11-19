@@ -56,9 +56,7 @@ export function DataTable<TData, TValue>({
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id} style={{ width: `${header.getSize()}px` }}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
+                    {flexRender(
                           header.column.columnDef.header,
                           header.getContext()
                         )}
@@ -73,7 +71,7 @@ export function DataTable<TData, TValue>({
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                data-state={row.getIsSelected() && "selected"}
+                data-state={"selected"}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>

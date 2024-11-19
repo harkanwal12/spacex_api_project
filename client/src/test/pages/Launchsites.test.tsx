@@ -4,19 +4,14 @@ import { RouterProvider, createMemoryRouter } from "react-router-dom";
 import { testRoutes } from "../routes/TestRoutes";
 import userEvent from '@testing-library/user-event'
 import {loader as launchsiteLoader} from "@/pages/LaunchSites";
+import { mockLaunchSitesWithLaunches, mockLaunchSitesWithNoLaunches } from "../MockData";
+import { ApiClient } from "@/lib/api";
 
-vi.mock('@/lib/api', () => {
-    return {
-      ApiClient: vi.fn().mockImplementation(() => {
-        return {
-            getAllLaunchpadsWithLaunches: vi.fn().mockResolvedValue({ id: "someid", name: 'somedata' }),
-        };
-      }),
-    };
-  });
+vi.mock("@/lib/api")
 
 describe("Launchsites page", () => {
     let router;
+    const mockClient = vi.mocked(ApiClient, true)
 
     beforeEach(() => {
         // Mock react router reports route
@@ -24,7 +19,8 @@ describe("Launchsites page", () => {
           initialEntries: ["/launchsites"],
           initialIndex: 0,
         });
-    
+        
+        mockClient.prototype.getLaunchpadWithLaunches.mockResolvedValue(mockLaunchSitesWithLaunches)
     
         render(
             <RouterProvider router={router} />
@@ -35,73 +31,87 @@ describe("Launchsites page", () => {
         vi.clearAllMocks();
     });
 
-    it("Initial renders occurs correctly", async () => {
-        await waitFor(() => screen.getByText(/Select launch site:/i))
-        const launchSiteSelector = screen.getByTestId("launchSiteSelector")
-
-        expect(screen.getByText(/Select launch site:/i)).toBeInTheDocument();
-        expect(screen.getByText(/No Launch Site selected/i)).toBeInTheDocument();
-        expect(within(launchSiteSelector).getByText("Vandenberg Space Force Base Space Launch Complex 3W"))
-        expect(within(launchSiteSelector).getByText("test name"))
-        
+    it("Renders year selector correctly on first load", async () => {
+        await waitFor(() => screen.getByText(/No Launch Site selected/i))
+        const siteSelector = screen.getByTestId("LaunchSiteSelector")
+        expect(siteSelector).toBeInTheDocument()
+        expect(screen.getByText(/Select a launch site to explore its history and the launches that happened there./i)).toBeInTheDocument();
     })
 
     it("Launch site selection works correctly", async () => {
-        await waitFor(() => screen.getByText(/Select launch site:/i))
-        const launchSiteSelector = screen.getByTestId("launchSiteSelector")
+        await waitFor(() => screen.getByText(/NO LAUNCH SITE SELECTED/i))
+        const launchSiteSelector = screen.getByTestId("LaunchSiteSelector")
         const user = userEvent.setup()
+        await user.click(launchSiteSelector)
         // Click a launch site and verify contents
-        await user.selectOptions(launchSiteSelector, "Vandenberg Space Force Base Space Launch Complex 3W")
+        const selectOption = screen.getByTestId('launchSiteSelectorOption5e9e4501f509094ba4566f84');
+        await user.click(selectOption)
 
         const launchesTableContainer = screen.getByTestId("LaunchesTableContainer")
-        const launchesRows = within(launchesTableContainer).getAllByRole("row");
-        const metaDataTable = screen.getByTestId("metaDataTable")
-        const metaDataTableRows = within(metaDataTable).getAllByRole("row");
         const launchSiteImage = screen.getByTestId("launchSiteImg")
-        expect(launchesRows.length).toBe(2)
-        expect(metaDataTableRows.length).toBe(4)
 
-        expect(within(launchesTableContainer).getByText(/FalconSat/i)).toBeInTheDocument()
-        expect(within(launchesTableContainer).getByText(/Fri, 24 Mar 2006 22:30:00 GMT/i)).toBeInTheDocument()
-        expect(within(metaDataTable).getByText(/VAFB SLC 3W/i)).toBeInTheDocument()
-        expect(within(metaDataTable).getByText(/retired/i)).toBeInTheDocument()
-        expect(within(metaDataTable).getByText(/0/i)).toBeInTheDocument()
-        expect(within(metaDataTable).getByText(/Short Name/i)).toBeInTheDocument()
-        expect(within(metaDataTable).getByText(/Location/i)).toBeInTheDocument()
-        expect(within(metaDataTable).getByText(/Status/i)).toBeInTheDocument()
-        expect(within(metaDataTable).getByText(/Launch Attempts/i)).toBeInTheDocument()
-        expect(screen.getByText(/test launchsite with launch/i)).toBeInTheDocument()
-        expect(launchSiteImage).toHaveAttribute("src", "https://i.imgur.com/7uXe1Kv.png")
+        expect(within(launchesTableContainer).getByText(/Starlink 4-20/i)).toBeInTheDocument()
+        expect(within(launchesTableContainer).getByText(/05 Sep 2022, 03:09/i)).toBeInTheDocument()
+        expect(within(launchesTableContainer).getByText(/Unknown/i)).toBeInTheDocument()
+        expect(screen.getByText(/active/i)).toBeInTheDocument()
+        expect(screen.getByText(/28.5618571/i)).toBeInTheDocument()
+        expect(screen.getByText(/97/i)).toBeInTheDocument()
+        expect(screen.getByText(/98%/i)).toBeInTheDocument()
+        expect(screen.getByText(/99/i)).toBeInTheDocument()
+        expect(screen.getByText(/Location/i)).toBeInTheDocument()
+        expect(screen.getByText(/Status/i)).toBeInTheDocument()
+        expect(screen.getByText(/Cape Canaveral, Florida/i)).toBeInTheDocument()
+        expect(screen.getByText(/Launch Attempts/i)).toBeInTheDocument()
+        expect(screen.getByText(/SpaceX's primary Falcon 9 pad/i)).toBeInTheDocument()
+        expect(screen.getByText(/Unknown/i)).toBeInTheDocument()
+        expect(screen.getByText(/Failure/i)).toBeInTheDocument()
+        expect(mockClient.prototype.getLaunchpadWithLaunches).toHaveBeenCalledWith("5e9e4501f509094ba4566f84", 'CCSFS SLC 40')
         
-        // Click another launch sites and verify details have changed
-        await user.selectOptions(launchSiteSelector, "test name")
-
-        const launchesTableContainerAfterClick = screen.getByTestId("LaunchesTableContainer")
-        const launchesRowsAfterClick = within(launchesTableContainer).getAllByRole("row");
-        const metaDataTableAfterClick = screen.getByTestId("metaDataTable")
-        const metaDataTableRowsAfterClick = within(metaDataTable).getAllByRole("row");
-        const launchSiteImageAfterClick = screen.getByTestId("launchSiteImg")
-        expect(launchesRowsAfterClick.length).toBe(2)
-        expect(metaDataTableRowsAfterClick.length).toBe(4)
-
-        expect(within(launchesTableContainerAfterClick).getByText(/No results./i)).toBeInTheDocument()
-        expect(within(metaDataTableAfterClick).getByText(/other/i)).toBeInTheDocument()
-        expect(within(metaDataTableAfterClick).getByText(/retired/i)).toBeInTheDocument()
-        expect(within(metaDataTableAfterClick).getByText(/0/i)).toBeInTheDocument()
-        expect(screen.getByText(/somedetails/i)).toBeInTheDocument()
-        expect(launchSiteImageAfterClick).toHaveAttribute("src", "some other link")
-
-        expect(within(launchesTableContainerAfterClick).queryByText(/FalconSat/i)).not.toBeInTheDocument()
-        expect(within(launchesTableContainerAfterClick).queryByText(/Fri, 24 Mar 2006 22:30:00 GMT/i)).not.toBeInTheDocument()
-        expect(within(metaDataTableAfterClick).queryByText(/VAFB SLC 3W/i)).not.toBeInTheDocument()
-        expect(screen.queryByText(/test launchsite with launch/i)).not.toBeInTheDocument()
-        expect(launchSiteImageAfterClick).not.toHaveAttribute("src", "https://i.imgur.com/7uXe1Kv.png")
+        expect(launchSiteImage).toHaveAttribute("src", "https://i.imgur.com/9oEMXwa.png")
     })
 })
 
 describe("Test Launchesites Loader", () => {
+    const mockClient = vi.mocked(ApiClient, true)
+    mockClient.prototype.getAllLaunchpadNames.mockResolvedValueOnce("something")
+
     it("Loader runs correctly", async () => {
         const launches = await launchsiteLoader() 
-        expect(launches).toEqual({ id: "someid", name: 'somedata' })
+        expect(launches).toEqual("something")
+        expect(mockClient.prototype.getAllLaunchpadNames).toHaveBeenCalledOnce()
     })
 })
+
+describe("Launchesites with no table data", () => {
+    let router;
+    const mockClient = vi.mocked(ApiClient, true)
+    beforeEach(() => {
+        // Mock react router reports route
+        router = createMemoryRouter(testRoutes, {
+        initialEntries: ["/launchsites"],
+        initialIndex: 0,
+        });
+    
+    
+        render(
+            <RouterProvider router={router} />
+        );
+    });
+    
+    afterEach(() => {
+        vi.clearAllMocks();
+    });
+
+    it("Loader runs correctly", async () => {
+        mockClient.prototype.getLaunchpadWithLaunches.mockResolvedValueOnce(mockLaunchSitesWithNoLaunches)
+        await waitFor(() => screen.getByText(/NO LAUNCH SITE SELECTED/i))
+        const launchSiteSelector = screen.getByTestId("LaunchSiteSelector")
+        const user = userEvent.setup()
+        await user.click(launchSiteSelector)
+        // Click a launch site and verify contents
+        const selectOption = screen.getByTestId('launchSiteSelectorOption5e9e4501f509094ba4566f84');
+        await user.click(selectOption)
+
+        expect(screen.getByText(/No results/i)).toBeInTheDocument()
+    });
+});

@@ -66,7 +66,10 @@ const LaunchSites = () => {
       header: () => <div className="text-center">Date of Launch (UTC)</div>,
       cell: ({ cell }:any) => {
         let date = cell.getValue()
-          return format(new Date(date), 'dd MMM yyyy, HH:mm')
+        if (date == null) {
+          return "Unknown"
+        }
+        return format(new Date(date), 'dd MMM yyyy, HH:mm')
       },
     },
     {
@@ -85,7 +88,7 @@ const LaunchSites = () => {
               )
           default:
               return (
-                  <Badge variant="grey">Unknown</Badge>
+                  <Badge variant="grey">N/A</Badge>
               )
         }
       },
@@ -98,12 +101,16 @@ const LaunchSites = () => {
     <div className="flex flex-col items-center gap-4 p-3">
       <div className="flex w-full">
         <Select onValueChange={onLaunchSiteSelectionChange}>
-        <SelectTrigger className="text-white w-[500px] bg-zinc-900">
+        <SelectTrigger data-testid="LaunchSiteSelector" className="text-white w-[500px] bg-zinc-900">
             <SelectValue placeholder="Select a launch site" />
         </SelectTrigger>
         <SelectContent className="text-white bg-zinc-900" >
             {launchsiteNames.map((launchsite) => (
-                <SelectItem  key={launchsite.id} value={launchsite.id}>{launchsite.full_name}</SelectItem>
+                <SelectItem 
+                data-testid={`launchSiteSelectorOption${launchsite.id}`} 
+                key={launchsite.id} 
+                value={launchsite.id}>{launchsite.full_name}
+                </SelectItem>
             ))}
         </SelectContent>
         </Select>
