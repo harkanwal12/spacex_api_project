@@ -36,11 +36,14 @@ class SpacexConnection:
     def _request(
         self, method: str, endpoint: str, data=None
     ) -> dict | list[dict]:
+
         url = self._base_url + endpoint
+
         log_line_pre = f"url={url}"
         log_line_post = ", ".join(
             (log_line_pre, "success={}, status_code={}, message={}")
         )
+
         try:
             self._logger.debug(msg=log_line_pre)
             response = requests.request(
@@ -53,20 +56,23 @@ class SpacexConnection:
                 description = "No data found for request"
                 raise NoDataFoundException(description) from e
             raise e
+
         is_success = 299 >= response.status_code >= 200
         log_line = f"success={is_success}, status_code={response.status_code}, message={response.reason}"
         self._logger.debug(msg=log_line)
+
         try:
             response = response.json()
         except (ValueError, JSONDecodeError) as e:
             self._logger.error(msg=log_line_post.format(False, None, e))
             raise BadJSONException("Bad JSON in response") from e
 
+        # Requests with MongoDB Queries store the data in the "docs" key
         if "docs" in response:
             response = response["docs"]
 
         if not response:
-            raise NoDataFoundException
+            raise NoDataFoundException("No data found for request")
 
         return response
 
