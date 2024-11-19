@@ -15,13 +15,13 @@ const Home = () => {
                 </div>
           </div>
           <div className="flex justify-center gap-5 p-5">
-            <Link to={'/launches'} className="box">
+            <Link data-testid="launchesBoxLink" to={'/launches'} className="box">
               <div className="gap-2">
                 <h2 className="font-bold text-lg">Launches</h2>
                 <p>Explore the history of SpaceX launches, organized by year.</p>
               </div>
             </Link>
-            <Link to={'/launchsites'} className="box">
+            <Link data-testid="launchsitesBoxLink" to={'/launchsites'} className="box">
               <div className="flex-col gap-2">
                 <h2 className="font-bold text-lg">Launch Sites</h2>
                 <p>Discover launch site history, and their launches.</p>

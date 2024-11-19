@@ -63,7 +63,7 @@ const LaunchSites = () => {
     },
     {
       accessorKey: "date_utc",
-      header: () => <div className="text-center">Date of Launch</div>,
+      header: () => <div className="text-center">Date of Launch (UTC)</div>,
       cell: ({ cell }:any) => {
         let date = cell.getValue()
           return format(new Date(date), 'dd MMM yyyy, HH:mm')

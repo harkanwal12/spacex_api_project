@@ -69,18 +69,19 @@ const Launches = () => {
         src: string
         alt: string
         className: string
+        id: string
     }
 
-    function IconCreator({href, src, alt, className }: IconCreatorProps) {
+    function IconCreator({id, href, src, alt, className }: IconCreatorProps) {
         return (
             <TooltipProvider delayDuration={0}>
                 <Tooltip>
                     <TooltipTrigger asChild>
                         {href ? <a href={href} target="_blank" rel="noopener noreferrer" className="inline-block">
-                            <img src={src} alt={alt} className={`${className}`} />
+                            <img data-testid={id} src={src} alt={alt} className={`${className}`} />
                         </a>
                         :
-                        <img src={src} alt={alt} className={`${className}`} />}
+                        <img data-testid={id} src={src} alt={alt} className={`${className}`} />}
                         </TooltipTrigger>
                 <TooltipContent side="bottom">
                 {href ? <p>Open {alt}</p> : <p>{alt} Unavailable</p>}
@@ -157,10 +158,11 @@ const Launches = () => {
                 return (
                 <div className="text-center">
                     <Button
+                    data-testid="dateButton"
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                    Date
+                    Date (UTC)
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 </div>
@@ -180,6 +182,7 @@ const Launches = () => {
                     <div className="flex justify-center">
                         {webcastUrl ?
                         <IconCreator
+                        id={cell.id}
                         href={cell.getValue()} 
                         src={ytIcon}
                         alt="YouTube"
@@ -187,6 +190,7 @@ const Launches = () => {
                         />
                         : 
                         <IconCreator
+                        id={cell.id}
                         src={ytDisabled}
                         alt="YouTube"
                         className="w-15 h-10"
@@ -205,6 +209,7 @@ const Launches = () => {
                     <div className="flex justify-center">
                         {wikipediaUrl ?
                         <IconCreator
+                        id={cell.id}
                         href={cell.getValue()} 
                         src={wikiIcon}
                         alt="Wikipedia"
@@ -212,6 +217,7 @@ const Launches = () => {
                         />
                         : 
                         <IconCreator
+                        id={cell.id}
                         src={wikiDisabled}
                         alt="Wikipedia"
                         className="w-20 h-15"
@@ -230,6 +236,7 @@ const Launches = () => {
                     <div className="flex justify-center">
                         {redditUrl ?
                         <IconCreator
+                        id={cell.id}
                         href={cell.getValue()} 
                         src={redditIcon}
                         alt="Reddit"
@@ -237,6 +244,7 @@ const Launches = () => {
                         />
                         : 
                         <IconCreator
+                        id={cell.id}
                         src={redditDisabled}
                         alt="Reddit"
                         className="w-15 h-15"
@@ -254,12 +262,12 @@ const Launches = () => {
         <div className="flex p-2 flex-col gap-2 items-center">
                 <div className="flex w-full space-x-7">
                         <Select onValueChange={onYearSelectionChange}>
-                        <SelectTrigger className="text-white w-[140px] bg-zinc-900">
+                        <SelectTrigger data-testid="yearSelector"  className="text-white w-[140px] bg-zinc-900">
                             <SelectValue placeholder="Select a year" />
                         </SelectTrigger>
                         <SelectContent className="text-white bg-zinc-900" >
                             {launchYears.map((year, index) => (
-                                <SelectItem  data-testid={`yearSelectorOptionAll${year}`} key={index} value={year}>{year}</SelectItem>
+                                <SelectItem  data-testid={`yearSelectorOption${year}`} key={index} value={year}>{year}</SelectItem>
                             ))}
                         </SelectContent>
                         </Select>

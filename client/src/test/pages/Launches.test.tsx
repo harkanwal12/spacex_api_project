@@ -1,15 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, waitFor, within, fireEvent } from "@testing-library/react";
 import { RouterProvider, createMemoryRouter } from "react-router-dom";
 import { testRoutes } from "../routes/TestRoutes";
 import userEvent from '@testing-library/user-event'
 import {loader as launchesLoader} from "@/pages/Launches";
+import { mockLaunchesInYear } from "../MockData";
 
 vi.mock('@/lib/api', () => {
     return {
       ApiClient: vi.fn().mockImplementation(() => {
         return {
-            getAllLaunches: vi.fn().mockResolvedValue({ id: "someid", name: 'somedata' }),
+            getAllUniqueLaunchYears: vi.fn().mockResolvedValue([2001, 2002]),
+            getAllLaunchesInYear: vi.fn().mockResolvedValue(mockLaunchesInYear),
         };
       }),
     };
@@ -35,66 +37,90 @@ describe("Launches page", () => {
         vi.clearAllMocks();
     });
 
-    it("Renders filter selector and table content correctly", async () => {
-        await waitFor(() => screen.getByText(/Select to filter by year/i))
-
-        const launchesTable = screen.getByRole("table")
-        const launchesRows = within(launchesTable).getAllByRole("row");
-        const rowCounter = screen.getByTestId("launchesTableRowCounter")
+    it("Renders year selector correctly on first load", async () => {
+        await waitFor(() => screen.getByText(/NO YEAR SELECTED/i))
         const yearSelector = screen.getByTestId("yearSelector")
-
-        expect(within(yearSelector).getByText("All"))
-        expect(within(yearSelector).getByText("2006"))
-        expect(within(yearSelector).getByText("2007"))
-        expect(screen.getByText(/Select to filter by year/i)).toBeInTheDocument();
-        expect(screen.getByText(/Number of Rocket Launches/i)).toBeInTheDocument();
-        expect(within(rowCounter).getByText(2))
-        // Row count includes the header row
-        expect(launchesRows.length).toBe(3);
+        expect(yearSelector).toBeInTheDocument()
+        expect(screen.getByText(/Select a year to discover the launches that took place/i)).toBeInTheDocument();
+        expect(screen.queryByText(/Number of Rocket Launches/i)).not.toBeInTheDocument();
     })
 
-    it("Year selection works correctly", async () => {
-        await waitFor(() => screen.getByText(/Select to filter by year/i))
-        const launchesTable = screen.getByRole("table")
-        const launchesRows = within(launchesTable).getAllByRole("row");
+    it("Year selection produces table with correct contents", async () => {
+        await waitFor(() => screen.getByText(/NO YEAR SELECTED/i))
+        const yearSelector = screen.getByTestId('yearSelector');
+        const user = userEvent.setup();
+
+        await user.click(yearSelector)
+
+        const selectOption = screen.getByTestId('yearSelectorOption2002');
+
+        await user.click(selectOption)
+
         const rowCounter = screen.getByTestId("launchesTableRowCounter")
+        const launchesTable = screen.getByRole("table")
+        const launchesRows = within(launchesTable).getAllByRole("row")
+        // Number of rows includes header
+        expect(launchesRows.length).toBe(4)       
+        expect(within(rowCounter).getByText(3)).toBeInTheDocument()
+        expect(within(launchesTable).getByText(/ZUMA/i)).toBeInTheDocument()
+        expect(within(launchesTable).getByText(/08 Jan 2018, 01:00/i)).toBeInTheDocument()
+        expect(within(launchesTable).getByText(/No patch available/i)).toBeInTheDocument()
+        expect(within(launchesTable).getByText(/SES-16/i)).toBeInTheDocument()
+        expect(within(launchesTable).getByText(/31 Jan 2018, 21:25/i)).toBeInTheDocument()    
+    })
+    it("Icons are enabled and disabled correctly", async () => {
+        await waitFor(() => screen.getByText(/NO YEAR SELECTED/i))
+        const yearSelector = screen.getByTestId('yearSelector');
+        const user = userEvent.setup();
+        await user.click(yearSelector)
+        const selectOption = screen.getByTestId('yearSelectorOption2002');
+        await user.click(selectOption)
 
-        // Before filtering table, verify row counts
-        expect(within(rowCounter).getByText(2)).toBeInTheDocument()
-        expect(launchesRows.length).toBe(3)
+        const disabledYoutubeLink = screen.getByTestId("0_webcast")
+        const disabledWikipediaLink = screen.getByTestId("0_wikipedia")
+        const disabledRedditLink = screen.getByTestId("0_reddit")
 
-        const user = userEvent.setup()
-        const yearSelector = screen.getByTestId("yearSelector")
-        await user.selectOptions(yearSelector, "2006")
+        const enabledYoutubeLink = screen.getByTestId("1_webcast")
+        const enabledWikipediaLink = screen.getByTestId("1_wikipedia")
+        const enabledRedditLink = screen.getByTestId("2_reddit")
 
-        // Only one row should be present
-        const launchesRowsAfterYearSelection = within(launchesTable).getAllByRole("row")
-        expect(within(rowCounter).getByText(1)).toBeInTheDocument()
-        expect(launchesRowsAfterYearSelection.length).toBe(2)
+        expect(disabledYoutubeLink).toHaveAttribute("src", "/src/assets/ytDisabled.png")
+        expect(disabledWikipediaLink).toHaveAttribute("src", "/src/assets/wikiDisabled.png")
+        expect(disabledRedditLink).toHaveAttribute("src", "/src/assets/redditDisabled.png")
 
-        expect(within(launchesTable).getByText(/FalconSat/i)).toBeInTheDocument()
-        expect(within(launchesTable).getByText(/Fri, 24 Mar 2006 22:30:00 GMT/i)).toBeInTheDocument()
-        expect(within(launchesTable).queryByText(/DemoSat/i)).not.toBeInTheDocument()
-        expect(within(launchesTable).queryByText(/Wed, 21 Mar 2007 01:10:00 GMT/i)).not.toBeInTheDocument()
+        expect(enabledYoutubeLink).toHaveAttribute("src", "/src/assets/ytIcon.png")
+        expect(enabledWikipediaLink).toHaveAttribute("src", "/src/assets/wikiIcon.png")
+        expect(enabledRedditLink).toHaveAttribute("src", "/src/assets/redditIcon.png")
+    })
+    it("Date sort function works correctly", async () => {
+        await waitFor(() => screen.getByText(/NO YEAR SELECTED/i))
+        const yearSelector = screen.getByTestId('yearSelector');
+        const user = userEvent.setup();
+        await user.click(yearSelector)
+        const selectOption = screen.getByTestId('yearSelectorOption2002');
+        await user.click(selectOption)
 
-        // Now select all rows again
-        await user.selectOptions(yearSelector, "All")
+        // Get the row order before sorting the date
+        const dateHeaderButton = screen.getByTestId("dateButton")
+        const rows = screen.getAllByRole('row');
 
-        // Both rows should be present
-        const launchesRowsAfterAllYearsSelected = within(launchesTable).getAllByRole("row")
-        expect(within(rowCounter).getByText(2)).toBeInTheDocument()
-        expect(launchesRowsAfterAllYearsSelected.length).toBe(3)
+        expect(rows[1]).toHaveTextContent(/08 Jan 2018, 01:00/i)
+        expect(rows[2]).toHaveTextContent(/31 Jan 2018, 21:25/i)
+        expect(rows[3]).toHaveTextContent(/06 Feb 2012, 20:45/i)
 
-        expect(within(launchesTable).getByText(/FalconSat/i)).toBeInTheDocument()
-        expect(within(launchesTable).getByText(/Fri, 24 Mar 2006 22:30:00 GMT/i)).toBeInTheDocument()
-        expect(within(launchesTable).getByText(/DemoSat/i)).toBeInTheDocument()
-        expect(within(launchesTable).getByText(/Wed, 21 Mar 2007 01:10:00 GMT/i)).toBeInTheDocument()
+        await user.click(dateHeaderButton)
+        // Get the row order after sorting the date
+        const rowsAfterSort = screen.getAllByRole('row');
+        
+        expect(rowsAfterSort[1]).toHaveTextContent(/06 Feb 2012, 20:45/i)
+        expect(rowsAfterSort[2]).toHaveTextContent(/08 Jan 2018, 01:00/i)
+        expect(rowsAfterSort[3]).toHaveTextContent(/31 Jan 2018, 21:25/i)
     })
 })
 
 describe("Test Launches Loader", () => {
     it("Loader runs correctly", async () => {
         const launches = await launchesLoader() 
-        expect(launches).toEqual({ id: "someid", name: 'somedata' })
+        expect(launches).toEqual([ 2001,2002])
     })
 })
