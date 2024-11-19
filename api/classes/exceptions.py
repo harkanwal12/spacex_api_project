@@ -5,7 +5,7 @@ This module contains all custom exceptions.
 
 
 class NoDataFoundException(Exception):
-    """The SpaceX API returns a 404 when no data is found"""
+    """Handles the 404 not found error returned by the SpaceX API"""
 
     pass
 
