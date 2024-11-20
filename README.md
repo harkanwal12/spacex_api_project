@@ -7,7 +7,9 @@ Full-stack implementation of a Python wrapper, Flask API and React Front-end.
 Based on the Open Source SpaceX API.
 </h3>
 
- 🚀 [View the deployed application here](https://spacex-client.onrender.com/)
+ <h3 align="center">
+   <a href="https://spacex-client.onrender.com/">🚀 View the deployed application here</a>
+ </h3>
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -45,7 +47,8 @@ Based on the Open Source SpaceX API.
             <li><a href="#react">React</a></li>
         </ul>
     </li>
-    <li><a href="#Acknowledgements">Acknowledgments</a></li>
+    <li><a href="#faqs">FAQs</a></li>
+    <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
 
