@@ -31,23 +31,23 @@ class SpaceX:
         self, launch_id: str = None, query: dict = None
     ) -> list[Launch]:
         endpoint = "/v4/launches"
-        launches = self.request_handler(endpoint, launch_id, query)
+        launches = self._request_handler(endpoint, launch_id, query)
         if isinstance(launches, list):
             return [Launch(**launch) for launch in launches]
         else:
-            return Launch(**launches)
+            return [Launch(**launches)]
 
     def get_launchpads(
         self, launchpad_id: str = None, query: dict = None
     ) -> list[Launchpad]:
         endpoint = "/v4/launchpads"
-        launchpads = self.request_handler(endpoint, launchpad_id, query)
+        launchpads = self._request_handler(endpoint, launchpad_id, query)
         if isinstance(launchpads, list):
             return [Launchpad(**launch) for launch in launchpads]
         else:
-            return Launchpad(**launchpads)
+            return [Launchpad(**launchpads)]
 
-    def request_handler(
+    def _request_handler(
         self, endpoint: str, id: str = None, query: dict = None
     ) -> list[dict] | dict:
         if id:

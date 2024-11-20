@@ -154,6 +154,124 @@ def example_launch_json():
 
 
 @pytest.fixture
+def example_launchpad_with_launches():
+    data = {
+        "images": {"large": ["https://i.imgur.com/1jwU0Pk.png"]},
+        "name": "KSC LC 39A",
+        "full_name": "Kennedy Space Center Historic Launch Complex 39A",
+        "locality": "Cape Canaveral",
+        "region": "Florida",
+        "latitude": 28.6080585,
+        "longitude": -80.6039558,
+        "launch_attempts": 55,
+        "launch_successes": 55,
+        "launches": [
+            {
+                "fairings": None,
+                "links": {
+                    "patch": {
+                        "small": "https://images2.imgbox.com/56/9d/gvzAqLFg_o.png",
+                        "large": "https://images2.imgbox.com/52/a0/z8Dwflcz_o.png",
+                    },
+                    "reddit": {
+                        "campaign": "https://www.reddit.com/r/spacex/comments/5n2e10/echostar_23_launch_campaign_thread/",
+                        "launch": "https://www.reddit.com/r/spacex/comments/5z8dkm/welcome_to_the_rspacex_echostar23_official_launch/",
+                        "media": "https://www.reddit.com/r/spacex/comments/5z8if6/rspacex_echostar_23_media_thread_videos_images/",
+                        "recovery": None,
+                    },
+                    "flickr": None,
+                    "presskit": "http://www.spacex.com/sites/spacex/files/crs10presskitfinal.pdf",
+                    "webcast": "https://www.youtube.com/watch?v=giNhaEzv_PI",
+                    "youtube_id": "giNhaEzv_PI",
+                    "article": "https://spaceflightnow.com/2017/02/19/historic-launch-pad-back-in-service-with-thundering-blastoff-by-spacex/",
+                    "wikipedia": "https://en.wikipedia.org/wiki/SpaceX_CRS-10",
+                },
+                "static_fire_date_utc": "2017-02-12T21:30:00.000Z",
+                "static_fire_date_unix": 1486935000,
+                "net": False,
+                "window": 0,
+                "rocket": "5e9d0d95eda69973a809d1ec",
+                "success": True,
+                "failures": [],
+                "details": "First Falcon 9 flight from the historic LC-39A launchpad at Kennedy Space Center, carrying supplies and materials to support dozens of science and research investigations scheduled during ISS Expeditions 50 and 51. The first stage returned to launch site and landed at LZ-1.",
+                "crew": [],
+                "ships": ["5ea6ed30080df4000697c912"],
+                "capsules": ["5e9e2c5cf359185d753b266f"],
+                "payloads": ["5eb0e4c3b6c3bb0006eeb209"],
+                "launchpad": "5e9e4502f509094188566f88",
+                "flight_number": 36,
+                "name": "CRS-10",
+                "date_utc": "2017-02-19T14:39:00.000Z",
+                "date_unix": 1487515140,
+                "date_local": "2017-02-19T10:39:00-04:00",
+                "date_precision": "hour",
+                "upcoming": False,
+                "cores": None,
+                "auto_update": True,
+                "tbd": False,
+                "launch_library_id": None,
+                "id": "5eb87cfeffd86e000604b34d",
+            },
+            {
+                "fairings": {
+                    "reused": False,
+                    "recovery_attempt": False,
+                    "recovered": False,
+                    "ships": None,
+                },
+                "links": {
+                    "patch": {
+                        "small": "https://images2.imgbox.com/11/eb/qqrhHFhv_o.png",
+                        "large": "https://images2.imgbox.com/ea/43/D4tA0WaM_o.png",
+                    },
+                    "reddit": {
+                        "campaign": "https://www.reddit.com/r/spacex/comments/5n2eqx",
+                        "launch": "https://www.reddit.com/r/spacex/comments/5uw4bh",
+                        "media": "https://www.reddit.com/r/spacex/comments/5uoy8o",
+                        "recovery": "https://www.reddit.com/r/spacex/comments/609aq4",
+                    },
+                    "flickr": None,
+                    "presskit": "http://www.spacex.com/sites/spacex/files/echostarxxiiifinal.pdf",
+                    "webcast": "https://www.youtube.com/watch?v=lZmqbL-hz7U",
+                    "youtube_id": "lZmqbL-hz7U",
+                    "article": "http://spacenews.com/spacex-launches-echostar-23/",
+                    "wikipedia": "https://en.wikipedia.org/wiki/EchoStar#Satellite_fleet",
+                },
+                "static_fire_date_utc": "2017-03-09T23:00:00.000Z",
+                "static_fire_date_unix": 1489100400,
+                "net": False,
+                "window": 9000,
+                "rocket": "5e9d0d95eda69973a809d1ec",
+                "success": True,
+                "failures": [],
+                "details": "Communications satellite for EchoStar Corp. EchoStar XXIII, based on a spare platform from the cancelled CMBStar 1 satellite program, will provide direct-to-home television broadcast services over Brazil. There was no attempt at a first-stage recovery so this rocket did not have landing legs or grid fins.",
+                "crew": [],
+                "ships": [],
+                "capsules": [],
+                "payloads": ["5eb0e4c3b6c3bb0006eeb20a"],
+                "launchpad": "5e9e4502f509094188566f88",
+                "flight_number": 37,
+                "name": "EchoStar 23",
+                "date_utc": "2017-03-16T06:00:00.000Z",
+                "date_unix": 1489644000,
+                "date_local": "2017-03-16T02:00:00-04:00",
+                "date_precision": "hour",
+                "upcoming": False,
+                "cores": None,
+                "auto_update": True,
+                "tbd": False,
+                "launch_library_id": None,
+                "id": "5eb87cfeffd86e000604b34e",
+            },
+        ],
+        "status": "active",
+        "details": "NASA's historic pad that launched most of the Saturn V and Space Shuttle missions, including Apollo 11. SpaceX initially leased solely for Falcon Heavy and Crew Dragon launches, but the company has also used it for others as well following the damage to SLC-40 in the AMOS-6 explosion. After completing the necessary modifications, the first launch SpaceX performed on the pad was CRS-10 in February 2017. After SLC-40 was back online, 39A was upgraded to support Falcon Heavy and complete the removal of the shuttle-era Rotating Service Structure. More recently, a crew access arm and other safety equipment has been installed in order to launch commercial crew missions. 39A also occasionally launches other Falcon 9 missions between Falcon Heavy and Crew Dragon launches, depending on pad scheduling. The pad may also potentially be upgraded in the future for use with the BFR.",
+        "id": "5e9e4502f509094188566f88",
+    }
+    return [Launchpad(**data)]
+
+
+@pytest.fixture
 def example_launchpad_json():
     return [
         {
@@ -199,8 +317,31 @@ def example_launches(example_launch_json):
 
 
 @pytest.fixture
-def example_launchpads(example_launchpad_json):
-    return [Launchpad(**launchpad) for launchpad in example_launchpad_json]
+def example_launch_years():
+    launch_years = [
+        {"id": "someid1", "date_utc": "2007-03-21T01:10:00.000Z"},
+        {"id": "someid2", "date_utc": "2003-03-21T01:10:00.000Z"},
+        {"id": "someid3", "date_utc": "2003-07-26T01:10:00.000Z"},
+        {"id": "someid4", "date_utc": "2009-07-26T01:11:22.230Z"},
+    ]
+    return [Launch(**launch) for launch in launch_years]
+
+
+@pytest.fixture
+def example_launchpad_names():
+    launchpad_names = [
+        {
+            "name": "VAFB SLC 3W",
+            "full_name": "Vandenberg Space Force Base Space Launch Complex 3W",
+            "id": "5e9e4501f5090910d4566f83",
+        },
+        {
+            "name": "other",
+            "full_name": "test name",
+            "id": "test_id_2",
+        },
+    ]
+    return [Launchpad(**launchpad) for launchpad in launchpad_names]
 
 
 @pytest.fixture

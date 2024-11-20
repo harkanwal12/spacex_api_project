@@ -6,19 +6,16 @@ class Config:
 class TestingConfig(Config):
     TESTING = True
     DEBUG = False
-    CONFIG_TYPE = "TEST"
 
 
 class DevConfig(Config):
     DEBUG = True
     TESTING = False
-    CONFIG_TYPE = "DEV"
 
 
 class ProdConfig(Config):
     TESTING = False
     DEBUG = False
-    CONFIG_TYPE = "PROD"
 
 
 config = {

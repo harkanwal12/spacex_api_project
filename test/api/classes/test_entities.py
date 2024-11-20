@@ -7,9 +7,7 @@ def test_create_launch_entity(example_launch_json):
 
 
 def test_create_launch_entity_required_args_only():
-    launch = Launch(
-        id="someid", name="somename", date_utc="somedate", launchpad="somesite"
-    )
+    launch = Launch(id="someid")
     assert isinstance(launch, Launch)
 
 
@@ -19,14 +17,5 @@ def test_create_launchpad_entity(example_launchpad_json):
 
 
 def test_create_launchpad_entity_required_args_only():
-    launch = Launchpad(
-        id="someid",
-        name="somename",
-        full_name="somename",
-        locality="someplace",
-        status="somestatus",
-        images="someimage",
-        details="somedetails",
-        launches="somelaunches",
-    )
+    launch = Launchpad(id="someid")
     assert isinstance(launch, Launchpad)

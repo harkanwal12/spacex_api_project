@@ -1,22 +1,24 @@
+import numpy as np
 import pandas as pd
 from flask import Blueprint
 from flask import current_app as app
-from flask import jsonify
-from werkzeug.exceptions import NotFound
-import numpy as np
-
+from flask import json, jsonify
+from werkzeug.exceptions import HTTPException, NotFound
 
 from api.classes.exceptions import NoDataFoundException
 from api.classes.spacex import SpaceX
 
-launches_bp = Blueprint("launches", __name__, url_prefix="/api")
-
-# TODO swap out SpaceX module with one from app instance
+api_bp = Blueprint("api", __name__, url_prefix="/api")
 
 
-@launches_bp.route("/get_all_launch_years", methods=["GET"])
+@api_bp.route("/")
+def api_home():
+    return jsonify("Welcome to the SpaceX Python Wrapper API"), 200
+
+
+@api_bp.route("/get_all_launch_years", methods=["GET"])
 def get_all_launch_years():
-    conn = SpaceX(ssl_verify=False)
+    conn = app.spacex_api
 
     query = {
         "query": {},
@@ -28,8 +30,6 @@ def get_all_launch_years():
 
     try:
         launches = conn.get_launches(query=query)
-    except NoDataFoundException as e:
-        raise NotFound("No data found for request")
     except Exception as e:
         raise e
 
@@ -40,9 +40,9 @@ def get_all_launch_years():
     return jsonify(unique_years.tolist()), 200
 
 
-@launches_bp.route("/<year>/get_all_launches_in_year", methods=["GET"])
+@api_bp.route("/<year>/get_all_launches_in_year", methods=["GET"])
 def get_all_launches_in_year(year):
-    conn = SpaceX(ssl_verify=False)
+    conn = app.spacex_api
 
     year = pd.Timestamp(year)
     next_year = year.replace(year=year.year + 1)
@@ -56,8 +56,6 @@ def get_all_launches_in_year(year):
 
     try:
         launches = conn.get_launches(query=query)
-    except NoDataFoundException as e:
-        raise NotFound("No data found for request")
     except Exception as e:
         raise e
 
@@ -90,9 +88,9 @@ def get_all_launches_in_year(year):
     return jsonify(launches_df.to_dict("records")), 200
 
 
-@launches_bp.route("/get_all_launchpad_names", methods=["GET"])
+@api_bp.route("/get_all_launchpad_names", methods=["GET"])
 def get_all_launchpad_names():
-    conn = SpaceX(ssl_verify=False)
+    conn = app.spacex_api
     query = {
         "query": {},
         "options": {
@@ -102,8 +100,6 @@ def get_all_launchpad_names():
     }
     try:
         launches = conn.get_launchpads(query=query)
-    except NoDataFoundException as e:
-        raise NotFound("No data found for request")
     except Exception as e:
         raise e
 
@@ -112,9 +108,9 @@ def get_all_launchpad_names():
     return jsonify(launches_df.to_dict("records")), 200
 
 
-@launches_bp.route("/<id>/<shortname>/get_launchpad_with_launches")
+@api_bp.route("/<id>/<shortname>/get_launchpad_with_launches")
 def get_launchpad_with_launches(id, shortname):
-    conn = SpaceX(ssl_verify=False)
+    conn = app.spacex_api
 
     query = {
         "query": {
@@ -133,8 +129,6 @@ def get_launchpad_with_launches(id, shortname):
 
     try:
         launchpad = conn.get_launchpads(query=query)
-    except NoDataFoundException as e:
-        raise NotFound("No data found for request")
     except Exception as e:
         raise e
 
@@ -159,17 +153,54 @@ def get_launchpad_with_launches(id, shortname):
     ]
 
     launchpad["images"] = launchpad["images"].apply(lambda x: x["large"][0])
-    launchpad["launch_success_rate"] = (
-        launchpad["launch_successes"] / launchpad["launch_attempts"]
-    ) * 100
-    if not np.isnan(launchpad["launch_success_rate"][0]):
-        launchpad["launch_success_rate"] = launchpad[
-            "launch_success_rate"
-        ].round()
-        launchpad["launch_success_rate"] = (
-            launchpad["launch_success_rate"].astype(int).astype(str) + "%"
-        )
-    else:
-        launchpad["launch_success_rate"] = "N/A"
+    launchpad["launch_success_rate"] = success_rate_calculator(
+        successes=launchpad["launch_successes"][0],
+        attempts=launchpad["launch_attempts"][0],
+    )
 
     return jsonify(launchpad.to_dict("records")), 200
+
+
+@api_bp.errorhandler(Exception)
+def handle_exception(error):
+    if isinstance(error, HTTPException):
+        # Create a response
+        response = error.get_response()
+        response.data = json.dumps(
+            {
+                "code": error.code,
+                "name": error.name,
+                "description": error.description,
+            }
+        )
+        response.content_type = "application/json"
+        return response
+
+    if isinstance(error, NoDataFoundException):
+        return (
+            jsonify("No data was found"),
+            404,
+        )
+
+    return (
+        jsonify(
+            "Unknown error occurred, please contact API developers for assistance"
+        ),
+        500,
+    )
+
+
+@staticmethod
+def success_rate_calculator(attempts: int, successes: int) -> str:
+    if not (attempts or successes):
+        return "N/A"
+
+    try:
+        rate = successes / attempts * 100
+    except Exception:
+        return "N/A"
+
+    if not np.isnan(rate):
+        return str(int(rate)) + "%"
+    else:
+        return "N/A"

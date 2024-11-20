@@ -1,9 +1,10 @@
 from logging.config import dictConfig
-from werkzeug.exceptions import HTTPException
+
 from flask import Flask, jsonify
 
 from api.classes.spacex import SpaceX
 from api.config import config
+from werkzeug.exceptions import HTTPException
 
 
 def create_app(config_type: str = None) -> Flask:
@@ -13,11 +14,9 @@ def create_app(config_type: str = None) -> Flask:
         config_type = "Default"
     app.config.from_object(config[config_type])
 
-    from api.index import index
-    from api.launches import launches
+    from api import routes
 
-    app.register_blueprint(launches.launches_bp)
-    app.register_blueprint(index.index_bp)
+    app.register_blueprint(routes.api_bp)
 
     dictConfig(
         {
@@ -42,30 +41,12 @@ def create_app(config_type: str = None) -> Flask:
         base_url=app.config["BASE_URL"], ssl_verify=False, logger=app.logger
     )
 
+    @app.route("/")
+    def index():
+        return app.send_static_file("index.html")
+
     @app.errorhandler(404)
     def not_found():
         return app.send_static_file("index.html")
-
-    @app.errorhandler(Exception)
-    def handle_exception(error):
-        if isinstance(error, HTTPException):
-            # Create a response
-            response = error.get_response()
-            response.data = jsonify(
-                {
-                    "code": error.code,
-                    "name": error.name,
-                    "description": error.description,
-                }
-            ).data
-            response.content_type = "application/json"
-            return response
-
-        return (
-            jsonify(
-                "Unknown error occurred, please contact API developers for assistance"
-            ),
-            500,
-        )
 
     return app
