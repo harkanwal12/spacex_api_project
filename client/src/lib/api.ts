@@ -4,7 +4,7 @@ const host = window.location.hostname
 
 export class ApiClient {
     axiosInstance: AxiosInstance
-    constructor(baseURL = import.meta.env.MODE === 'production' ? "https://"+ host +"/api/" : "http://"+ host + ":5555/api/") {
+    constructor(baseURL = import.meta.env.MODE === 'production' ? "https://"+ host +"/api/" : "http://"+ host + ":5000/api/") {
       this.axiosInstance = axios.create({
         baseURL: baseURL
       });
