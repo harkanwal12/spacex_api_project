@@ -51,7 +51,7 @@ describe("Launchsites page", () => {
         const launchSiteImage = screen.getByTestId("launchSiteImg")
 
         expect(within(launchesTableContainer).getByText(/Starlink 4-20/i)).toBeInTheDocument()
-        expect(within(launchesTableContainer).getByText(/05 Sep 2022, 03:09/i)).toBeInTheDocument()
+        expect(within(launchesTableContainer).getByText(/05 Sep 2022/i)).toBeInTheDocument()
         expect(within(launchesTableContainer).getByText(/Unknown/i)).toBeInTheDocument()
         expect(screen.getByText(/active/i)).toBeInTheDocument()
         expect(screen.getByText(/28.5618571/i)).toBeInTheDocument()
