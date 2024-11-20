@@ -205,7 +205,7 @@ Both the front and backend are fully unit tested, with 100% line coverage on eac
 
 2. Run the tests with the coverage output
     ```sh
-    npx vitest --coverage.enabled
+    npm run coverage
     ```
 3. Alternatively, use VSCode's test runner.
 
