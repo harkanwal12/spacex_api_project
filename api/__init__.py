@@ -40,8 +40,16 @@ def create_app(config_type: str = None) -> Flask:
         base_url=app.config["BASE_URL"], ssl_verify=False, logger=app.logger
     )
 
+    # Serves the react app from flask as a static file
     @app.route("/")
     def index():
+        return app.send_static_file("index.html")
+
+    # Handles the re-routing when directly accessing front-end endpoints
+    # The front-end routes do not exist on flask so a 404 is thrown
+    # This catches the 404 and re-routes back to react-router
+    @app.errorhandler(404)
+    def error_404(e):
         return app.send_static_file("index.html")
 
     return app
