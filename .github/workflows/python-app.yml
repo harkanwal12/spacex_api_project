@@ -1,4 +1,4 @@
-name: Python Build and Test
+name: Builds and tests entire application
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  python_build:
 
     runs-on: ubuntu-latest
 
@@ -33,4 +33,23 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest
+        pytest --cov
+
+  react_build:
+
+    runs-on: ubuntu-latest
+  
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Node version 18.16.1
+      uses: actions/setup-node@v4
+      with:
+        node-version: "18.16.1"
+    - name: Install dependencies
+      run: |
+        cd client
+        npm ci
+        npm run build --if-present
+    - name: Test with Vitest
+      run: |
+        npx vitest --coverage.enabled;
