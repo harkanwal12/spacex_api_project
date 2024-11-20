@@ -52,4 +52,4 @@ jobs:
         npm run build --if-present
     - name: Test with Vitest
       run: |
-        npx vitest --coverage.enabled;
+        npm run coverage
