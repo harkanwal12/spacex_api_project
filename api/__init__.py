@@ -1,10 +1,9 @@
 from logging.config import dictConfig
 
-from flask import Flask, jsonify
+from flask import Flask
 
 from api.classes.spacex import SpaceX
 from api.config import config
-from werkzeug.exceptions import HTTPException
 
 
 def create_app(config_type: str = None) -> Flask:
@@ -43,10 +42,6 @@ def create_app(config_type: str = None) -> Flask:
 
     @app.route("/")
     def index():
-        return app.send_static_file("index.html")
-
-    @app.errorhandler(404)
-    def not_found():
         return app.send_static_file("index.html")
 
     return app
