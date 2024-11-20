@@ -145,12 +145,12 @@ The React application will be running on `http://localhost:5173/`. Navigate to t
 
 VSCode users can utilise it's built-in debugger to quickly launch instances of both flask and react applications. Please run the `API: Development` and `CLIENT: Development` run configurations in the `Run and Debug` mode.
 
-When running the API, you will need to ensure your VSCode Python Interpreter is set to the python executable `.api/env/Scripts/python.exe`. 
+When running the API, you will need to ensure your VSCode Python Interpreter is set to the python executable `./api/env/Scripts/python.exe`. 
 
 1. Navigate to the Command Palette (Ctlr + Shift + P)
 2. Select `Python: Select Interpreter`
 3. Select `Enter interpreter path...`
-4. Select the python executable in `.api/env/Scripts/python.exe`
+4. Select the python executable `./api/env/Scripts/python.exe`
 5. Restart any open terminals for the change to take effect.
 
 **IMPORTANT**:
