@@ -27,12 +27,65 @@ def test_app(mocker, mock_app):
     assert isinstance(app, Flask)
 
 
-def test_index_prod_success(mock_app):
-    mock_send_static_file = Mock()
-    mock_send_static_file.return_value = "Static file content"
-    mock_app.send_static_file = mock_send_static_file
+def test_index_prod_success(mock_app, mocker):
+    """This test validates that the front-end is served when navigating to
+    the root endpoint of the flask app
+    """
+    mock_app.config["FRONTEND_BUILD_DIR"] = "somedir"
+    mock_app.config["FRONTEND_ROOT_FILE"] = "somefile"
+    mock_flask = mocker.patch("api.send_from_directory")
+    mock_flask.return_value = "something"
     response = mock_app.test_client().get("/")
 
     assert response.status_code == 200
-    assert response.data.decode() == "Static file content"
-    mock_send_static_file.assert_called_once_with("index.html")
+    assert response.data.decode() == "something"
+    mock_flask.assert_called_with("somedir", "somefile")
+
+
+def test_index_not_prod_success(mock_app, mocker):
+    """This test validates that when not in production, routing defaults to
+    the flask API
+    """
+    mock_app.config["FRONTEND_BUILD_DIR"] = None
+    mock_app.config["FRONTEND_ROOT_FILE"] = "somefile"
+    mock_flask = mocker.patch("api.send_from_directory")
+    mock_flask.return_value = "something"
+    response = mock_app.test_client().get("/")
+
+    assert response.status_code == 302
+    assert response.location == "/api/"
+    assert (
+        b"You should be redirected automatically to the target URL"
+        in response.data
+    )
+    mock_flask.assert_not_called()
+
+
+def test_prod_invalid_route_sent_to_frontend(mock_app, mocker):
+    """This test validates that any 404 errors resulting from invalid routes
+    get sent to the front-end to handle
+    """
+    mock_app.config["FRONTEND_BUILD_DIR"] = "somedir"
+    mock_app.config["FRONTEND_ROOT_FILE"] = "somefile"
+    mock_flask = mocker.patch("api.send_from_directory")
+    mock_flask.return_value = "something"
+    response = mock_app.test_client().get("/someinvalidroute")
+
+    assert response.status_code == 200
+    assert response.data.decode() == "something"
+    mock_flask.assert_called_with("somedir", "somefile")
+
+
+def test_index_not_prod_invalid_route(mock_app, mocker):
+    """This test validates that when not in production, invalid routes are
+    handled by flask
+    """
+    mock_app.config["FRONTEND_BUILD_DIR"] = None
+    mock_app.config["FRONTEND_ROOT_FILE"] = "somefile"
+    mock_flask = mocker.patch("api.send_from_directory")
+    mock_flask.return_value = "something"
+    response = mock_app.test_client().get("/some invalid route")
+
+    assert response.status_code == 404
+    assert response.json == "Resource is invalid or unavailable"
+    mock_flask.assert_not_called()
