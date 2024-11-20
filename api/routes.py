@@ -43,10 +43,9 @@ def get_all_launch_years():
 @api_bp.route("/<year>/get_all_launches_in_year", methods=["GET"])
 def get_all_launches_in_year(year):
     conn = app.spacex_api
-
     year = pd.Timestamp(year)
-    next_year = year.replace(year=year.year + 1)
 
+    next_year = year.replace(year=year.year + 1)
     query = {
         "query": {"date_utc": {"$gte": str(year), "$lt": str(next_year)}},
         "options": {
@@ -61,6 +60,8 @@ def get_all_launches_in_year(year):
 
     launches_df = pd.DataFrame(launches)
     launches_df["date_utc"] = pd.to_datetime(launches_df["date_utc"], utc=True)
+
+    # Flatten the nested "links" object to prep data for front-end
     links_df = pd.json_normalize(launches_df["links"])
     launches_df = pd.concat(
         [
@@ -112,6 +113,8 @@ def get_all_launchpad_names():
 def get_launchpad_with_launches(id, shortname):
     conn = app.spacex_api
 
+    # The populate option ensures the joining of nested launch IDs
+    # This is done server-side, to take load off this app
     query = {
         "query": {
             "id": {"$eq": id},
@@ -163,8 +166,8 @@ def get_launchpad_with_launches(id, shortname):
 
 @api_bp.errorhandler(Exception)
 def handle_exception(error):
+    """Handles all exceptions according to their types"""
     if isinstance(error, HTTPException):
-        # Create a response
         response = error.get_response()
         response.data = json.dumps(
             {
@@ -192,6 +195,7 @@ def handle_exception(error):
 
 @staticmethod
 def success_rate_calculator(attempts: int, successes: int) -> str:
+    """Handles the calculation of launch success rates"""
     if not (attempts or successes):
         return "N/A"
 

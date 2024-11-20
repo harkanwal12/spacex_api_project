@@ -59,6 +59,8 @@ const Launches = () => {
     }
 
     const dateSortFn = (rowA:any, rowB:any, columnId:string) => {
+        /**Custom date sorting function for the launches table */
+
         const dateA = new Date(rowA.original[columnId])
         const dateB = new Date(rowB.original[columnId])
         return dateA.valueOf() - dateB.valueOf()
@@ -73,6 +75,8 @@ const Launches = () => {
     }
 
     function IconCreator({id, href, src, alt, className }: IconCreatorProps) {
+        /**Handles the availability of external links 
+         * and presents as disabled or enabled */
         return (
             <TooltipProvider delayDuration={0}>
                 <Tooltip>
