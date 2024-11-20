@@ -47,6 +47,7 @@ Based on the Open Source SpaceX API.
             <li><a href="#react">React</a></li>
         </ul>
     </li>
+    <li><a href="#github-actions-cicd">GitHub Actions CI/CD</a></li>
     <li><a href="#faqs">FAQs</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
@@ -208,6 +209,16 @@ Both the front and backend are fully unit tested, with 100% line coverage on eac
     npm run coverage
     ```
 3. Alternatively, use VSCode's test runner.
+
+## GitHub Actions CI/CD
+
+A Github Actions Workflow has been created which builds and tests the entire application. This Workflow uses both Pytest and Vite. 
+
+1. [Navigate to the Workflows section of the repository](https://github.com/harkanwal12/spacex_api_project/actions)
+
+2. View the latest Python and React builds.
+
+3. [View the Workflow file here](https://github.com/harkanwal12/spacex_api_project/actions/runs/11942829592/workflow)
 
 ## FAQs
 
