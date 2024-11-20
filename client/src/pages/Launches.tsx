@@ -260,7 +260,7 @@ const Launches = () => {
     )
 
     return (
-        <div className="flex p-2 flex-col gap-2 items-center">
+        <div className="flex p-3 flex-col gap-2 items-center">
                 <div className="flex w-full space-x-7">
                         <Select onValueChange={onYearSelectionChange}>
                         <SelectTrigger data-testid="yearSelector" className="text-white w-[140px] bg-zinc-900">
