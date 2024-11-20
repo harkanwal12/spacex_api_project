@@ -4,6 +4,13 @@ from api.routes import success_rate_calculator
 import numpy as np
 
 
+def test_get_api_home(mock_app):
+    response = mock_app.test_client().get("/api/")
+
+    assert response.status_code == 200
+    assert response.json == "Welcome to the SpaceX Python Wrapper API"
+
+
 def test_get_all_launch_years_success(mock_app, example_launch_years):
     mock_app.spacex_api.get_launches.return_value = example_launch_years
     response = mock_app.test_client().get("/api/get_all_launch_years")
@@ -288,6 +295,17 @@ def test_get_launchpad_with_launches_success(
     assert response.status_code == 200
     assert response.json == expected_response
     mock_app.spacex_api.get_launchpads.assert_called_with(query=expected_query)
+
+
+def test_get_launchpad_with_launches_error_404(mock_app):
+    mock_app.spacex_api.get_launchpads.side_effect = NoDataFoundException
+
+    response = mock_app.test_client().get(
+        "/api/someid/somename/get_launchpad_with_launches"
+    )
+
+    assert response.status_code == 404
+    assert response.json == "No data was found"
 
 
 def test_success_rate_calculator():
