@@ -66,11 +66,17 @@ Please navigate to the launch and launch site pages.
 ## About
 **SpaceX API Client** is a full-stack solution which uses the [SpaceX API](https://github.com/r-spacex/SpaceX-API) to wrap and serve information to a dedicated front-end. It is made up of the following components:
 
-- Python module which serves as a wrapper for the SpaceX API
+- Python module which serves as a wrapper (SDK) for the SpaceX API
 - Flask API is an interface for the python module
 - React front-end integrated with the Flask API 
 
 The Python module is completely standalone, and is able to read, write and query the SpaceX API. It currently only supports launches and launch sites. 
+
+Benefits of this application include:
+- The ability to package the Python SpaceX Wrapper as a standalone Python module, which can be used to easily access the SpaceX API with Python.
+- The wrapper uses data classes, low-level to high-level code abstraction, exception handling and logging to ensure flexibility and usability for developers.
+- The API can be deployed as a web service independent of the React client. This allows for multiple clients to plug and play the API
+- Fully unit tested, with 100% line coverage, which ensures peace of mind.
 
 ### Built With
 
